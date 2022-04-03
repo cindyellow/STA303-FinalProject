@@ -116,20 +116,15 @@ median_income <- census_data_csd %>%
   select(CSDuid = GeoUID, contains("median"), Population) %>% 
   mutate(CSDuid = parse_number(CSDuid)) %>% 
   rename(hhld_median_inc = 2)
-
-
 ```
 
 
 ## Data Wrangling
 ```{r}
-
 #Create new customer age variable
 customer <- customer %>%
   mutate(dob = as.Date(dob,'%Y-%m-%d')) %>%
   mutate(age = as.numeric(difftime(Sys.Date(),dob, units = "weeks"))/52.25)
-
-
 
 # Make sure we only have 1 row per each CSDuid-postal code pair
 postal_code <- postal_code %>%
@@ -193,7 +188,7 @@ cust_sleep_mod <- left_join(cust_sleep, customer, by="cust_id")
 cust_sleep_mod <- left_join(cust_sleep_mod, cust_dev, by="cust_id")
 cust_sleep_mod <- left_join(cust_sleep_mod, dev_sleep, by="dev_id")
 
-# Select relevant columns and 
+# Select relevant columns 
 cust_sleep_mod <- cust_sleep_mod %>%
   subset(select=-c(dev_id, released))
 ```
