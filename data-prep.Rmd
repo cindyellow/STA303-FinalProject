@@ -27,7 +27,8 @@ library(cancensus)
 library(sf)
 library(geojsonsf)
 library(haven)
-
+library(polite)
+library(rvest)
 ```
 
 # Loading client data
@@ -55,9 +56,8 @@ device <- read_rds("data-raw/device.Rds")
 # Customer data
 customer <- read_rds("data-raw/customer.Rds")
 
-
-
-
+# Customer sleep data
+cust_sleep <- readRDS("data-raw/cust_sleep.Rds")
 ```
 
 # Getting external data
@@ -65,8 +65,27 @@ customer <- read_rds("data-raw/customer.Rds")
 ## Web scraping industry data
 
 ```{r}
+# Device
+url <- "https://fitnesstrackerinfohub.netlify.app/"
 
+# Make sure this code is updated appropriately to provide 
+# informative user_agent details
+target <- bow(url,
+              user_agent = "cindyy.huang@utoronto.ca for STA303/1002 project",
+              force = TRUE)
+
+# Any details provided in the robots text on crawl delays and 
+# which agents are allowed to scrape
+target
+
+html <- scrape(target)
+
+device_data <- html %>% 
+  html_elements("table") %>% 
+  html_table() %>% 
+  pluck(1) # added, in case you're getting a list format
 ```
+
 
 # Census API
 
@@ -144,18 +163,49 @@ cust_dev_info <- inner_join(x= cust_dev_info, y=device, by="dev_id")
 cust_dev_info <- cust_dev_info %>%
   select(sex, pronouns, emoji_modifier, age, income, device_name, line, released) %>%
   subset(select=-c(cust_id))
-
-
-
 ```
+
+```{r}
+# Create a categorical variable based on device's recommended retail price: (<100, 100-200, 200-300, >300)
+device_data <- device_data %>%
+  mutate(retail_price = `Recommended retail price`,
+         price_cat = ifelse(retail_price < 100, "<100", ifelse(retail_price < 200, "100-200", ifelse(retail_price < 300, "200-300", ">300")))
+         )
+
+# Create a numerical variable for the device's age based on its release date
+device_data$Released <- as.POSIXct(device_data$Released)
+device_data$dev_age <- format(device_data$Released, format="%Y")
+device_data$dev_age <- 2022 - as.integer(device_data$dev_age)
+
+# Filter device details to only include devices that track sleep
+dev_sleep <- device_data %>%
+  select(`Device name`, Line, `Recommended retail price`, price_cat, `Battery life`,  dev_age) %>%
+  rename(device_name = `Device name`, line = Line, retail_price = `Recommended retail price`, bat_life = `Battery life`) 
+
+# Reformat battery life (bat_life) categories to represent maximum battery life in integers
+dev_sleep$bat_life <- ifelse(dev_sleep$bat_life == "Up to 21 days", 21, ifelse(dev_sleep$bat_life == "Up to 14 days", 14, ifelse(dev_sleep$bat_life == "Up to 7 days", 7, 5)))
+
+# Join to include device IDs
+dev_sleep <- left_join(device, dev_sleep, by=c("device_name" = "device_name", "line" = "line"))
+
+# Customer sleep data with information on device
+cust_sleep_mod <- left_join(cust_sleep, customer, by="cust_id")
+cust_sleep_mod <- left_join(cust_sleep_mod, cust_dev, by="cust_id")
+cust_sleep_mod <- left_join(cust_sleep_mod, dev_sleep, by="dev_id")
+
+# Select relevant columns and 
+cust_sleep_mod <- cust_sleep_mod %>%
+  subset(select=-c(dev_id, released))
+```
+
 
 ## Write to Rds
 
 ```{r}
-
 # Write to rds
 write_rds(x=cust_dev_info, file="data/cust_dev_info.Rds")
-
+write_rds(dev_sleep, "data/dev_sleep.Rds")
+write_rds(cust_sleep_mod, "data/cust_sleep_complete.Rds")
 ```
 
 
