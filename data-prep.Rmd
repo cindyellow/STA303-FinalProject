@@ -22,12 +22,41 @@ output:
 
 ```{r, libraries}
 # Set up any libraries you need
+library(tidyverse)
+library(cancensus)
+library(sf)
+library(geojsonsf)
+library(haven)
 
 ```
 
 # Loading client data
 
 ```{r}
+
+# Postal code data
+
+# Note that using the original dataset crashes on JupyterHub so we will be using break_glass_in_case_of_emergency instead. C
+
+# Code for had we used the original dataset:
+# dataset = read_sav("data-raw/pccfNat_fccpNat_082021sav.sav")
+# postcode <- dataset %>% 
+#   select(PC, CSDuid)
+
+# Using break_glass_in_case_of_emergency instead
+postal_code <- read_rds("data-raw/break_glass_in_case_of_emergency.Rds")
+
+# Customer to device data
+cust_dev <- read_rds("data-raw/cust_dev.Rds")
+
+# Device data
+device <- read_rds("data-raw/device.Rds")
+
+# Customer data
+customer <- read_rds("data-raw/customer.Rds")
+
+
+
 
 ```
 
@@ -43,5 +72,90 @@ output:
 
 ```{r}
 
+# Retrieving income data from the 2016 Canada census
+
+options(cancensus.api_key = "CensusMapper_f6c277b158875b85a8d9423115396b89",
+        cancensus.cache_path = "cache") # this sets a folder for your cache
+
+
+# get all regions as at the 2016 Census (2020 not up yet)
+regions <- list_census_regions(dataset = "CA16")
+
+regions_filtered <-  regions %>% 
+  filter(level == "CSD") %>% # Figure out what CSD means in Census data
+  as_census_region_list()
+
+# This can take a while
+# We want to get household median income
+census_data_csd <- get_census(dataset='CA16', regions = regions_filtered,
+                          vectors=c("v_CA16_2397"), 
+                          level='CSD', geo_format = "sf")
+
+# Simplify to only needed variables
+median_income <- census_data_csd %>% 
+  as_tibble() %>% 
+  select(CSDuid = GeoUID, contains("median"), Population) %>% 
+  mutate(CSDuid = parse_number(CSDuid)) %>% 
+  rename(hhld_median_inc = 2)
+
+
 ```
+
+
+## Data Wrangling
+```{r}
+
+#Create new customer age variable
+customer <- customer %>%
+  mutate(dob = as.Date(dob,'%Y-%m-%d')) %>%
+  mutate(age = as.numeric(difftime(Sys.Date(),dob, units = "weeks"))/52.25)
+
+
+
+# Make sure we only have 1 row per each CSDuid-postal code pair
+postal_code <- postal_code %>%
+  distinct(CSDuid, PC)
+
+# Make sure we only have 1 row per each CSDuid-median income pair
+median_income <- median_income %>%
+  distinct(CSDuid, hhld_median_inc)
+
+# Incomes with postal codes
+income_postal <- inner_join(x= median_income, y=postal_code, by="CSDuid")
+
+# Customer and incomes (using postal codes)
+customer_incomes <- left_join(x= customer, y= income_postal, by = c("postcode" = "PC"))
+
+# Customers with more than 1 postcode and hence, more than 1 income will now be assigned the mean of those incomes
+customer_incomes <- customer_incomes %>%
+  group_by(cust_id) %>%
+  summarise(income = mean(hhld_median_inc)) %>%
+  ungroup() 
+customer_incomes <- inner_join(x= customer, y=customer_incomes, by="cust_id") 
+
+# Customer to devices with customer information
+cust_dev_info <- inner_join(x= cust_dev, y=customer_incomes, by="cust_id")
+
+# Customer to devices with customer and devices information
+cust_dev_info <- inner_join(x= cust_dev_info, y=device, by="dev_id")
+
+
+# Select relevant columns
+cust_dev_info <- cust_dev_info %>%
+  select(sex, pronouns, emoji_modifier, age, income, device_name, line, released) %>%
+  subset(select=-c(cust_id))
+
+
+
+```
+
+## Write to Rds
+
+```{r}
+
+# Write to rds
+write_rds(x=cust_dev_info, file="data/cust_dev_info.Rds")
+
+```
+
 
