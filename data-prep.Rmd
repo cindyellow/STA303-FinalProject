@@ -126,7 +126,7 @@ income_postal <- inner_join(x= median_income, y=postal_code, by="CSDuid")
 # Customer and incomes (using postal codes)
 customer_incomes <- left_join(x= customer, y= income_postal, by = c("postcode" = "PC"))
 
-# Customers with more than 1 postcode and hence, more than 1 income will now be assigned the mean of those incomes
+# Customers with more than 1 postcode (and hence, more than 1 income) will now be assigned the mean of those incomes
 customer_incomes <- customer_incomes %>%
   group_by(cust_id) %>%
   summarise(income = mean(hhld_median_inc)) %>%
