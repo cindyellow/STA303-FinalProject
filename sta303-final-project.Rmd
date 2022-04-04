@@ -110,6 +110,8 @@ _In this section you will summarize your findings across all the research questi
 
 **Warren Zhu**. Warren is a professional Data and Computer Scientist with over 10 years of experience. He was a former researcher at the University of Toronto, specializing in Multi-lingual Natural Language Processing. Having great understanding and experience with many Mathematical and Statistical concepts, he now serves as a consultant in various fields, including (but not limited to) marketing, health care and linguistics.
 
+**Xiaotang (Jeffrey) Zhou**. Some bio stuff here.
+
 ## Code of ethical conduct
 
 _This section should be fairly short, no more than half a page. Assume a general audience, much like your executive summary._
