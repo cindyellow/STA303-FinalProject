@@ -1,7 +1,7 @@
 ---
 title: "Report title"
 subtitle: "Subtitle that indicates findings"
-author: "Report prepared for MINGAR by [consulting company name]"
+author: "Report prepared for MINGAR by UofTears"
 date: 2022-04-07
 lang: "en"
 output:
@@ -10,7 +10,7 @@ output:
     toc: true
     toc_depth: 2
 titlepage: true
-titlepage-color: "6C3082"
+titlepage-color: "002554"
 titlepage-text-color: "FFFFFF"
 titlepage-rule-color: "FFFFFF"
 titlepage-rule-height: 2
@@ -22,7 +22,6 @@ library(lme4)
 library(rvest)
 library(polite)
 library(lmtest)
-library()
 
 # this should suppress all code and messages
 knitr::opts_chunk$set(include=FALSE)
@@ -69,6 +68,9 @@ _Provide a brief introduction to your report and outline what the report will co
 ### Research questions
 _Use bullet points to to describe the research questions you are going to address. Write in full sentences._
 
+- Who are our new customers? How are buyers of the newer and more affordable 'Active' and 'Advance' products different to our traditional customers? 
+- Is there a difference in device performance for users of different skin color, particularly with respect to sleep scores?
+
 ## Informative title for section addressing a research question
 
 _For each research question, you will want to briefly describe any data manipulation, show some exploratory plots/summary tables, report on any methods you use (i.e. models you fit) and the conclusions you draw from these_
@@ -104,7 +106,7 @@ _In this section you will summarize your findings across all the research questi
 
 **Chloe Nguyen**. Chloe is a third-year Data Science and Computer Science student at the University of Toronto. She specializes in data science and machine learning. Chloe has experience working in project management and software devlopment at Microsoft's Cloud and AI team- where she collaborated with internal and external stakeholders to create project plans, build prototypes and develop solutions. Chloe is an avid member of UofT's Computer Science community, having lead various student unions and clubs-such as President of Women in Computer Science, Treasurer of the Computer Science Student Union and Sponsorship Executive of Neurotech.
 
-**Datana Scatterplot**. Datana is a junior consultant with Eminence Analytics. They specialize in reproducible analysis and statistical communication. Datana earned their Bachelor of Science, Majoring in Computer Science and Statistics from the University of Toronto in 2024.
+**Shih-Ting (Cindy) Huang**. Cindy is currently a third-year undergraduate studying Data Science at the University of Toronto. With a passion for improving user experience through machine learning, she actively seeks ways to implement different theoretical concepts in real life for business-oriented problems. Her skills in multidisciplinary fields, including data science, marketing, and linguistics, have enabled her to obtain a holistic perspective on multiple projects and devise creative solutions with a user-guided mindset.
 
 ## Code of ethical conduct
 
