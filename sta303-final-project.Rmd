@@ -112,6 +112,10 @@ _In this section you will summarize your findings across all the research questi
 
 _This section should be fairly short, no more than half a page. Assume a general audience, much like your executive summary._
 
+1. Responsibility to Society: "strive to advance public knowledge and understanding of information...providing assistance in discrediting false or misleading info"
+2. Responsibility to Employers and Clients: avoid disclosure of confidential information without prior written permission
+3. Prevent use of misleading summary of the data and ensure to detail all assumptions and limitations relevant to the data
+
 * _Make at least three relevant statements about your company's approach to ethical statistical consulting. These should be appropriately in line with professional conduct advice like the (Statistical Society of Canada Code of Conduct)[https://ssc.ca/sites/default/files/data/Members/public/Accreditation/ethics_e.pdf] or the (Ethical Guidelines for Statistical Practice from the American Statistical Society)[https://www.amstat.org/ASA/Your-Career/Ethical-Guidelines-for-Statistical-Practice.aspx]. For example, "the customer is always right" ISN'T the type of thing an ethical statistical consultant would include._
 *	_Be very careful not to just copy and paste from these other documents! Put things in your own words._
 
