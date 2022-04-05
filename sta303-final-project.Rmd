@@ -16,7 +16,7 @@ titlepage-rule-color: "FFFFFF"
 titlepage-rule-height: 2
 ---
 
-```{r, message = FALSE, echo=FALSE}
+```{r load_packages, message = FALSE, echo=FALSE}
 library(tidyverse)
 library(lme4)
 library(rvest)
@@ -77,17 +77,43 @@ _For each research question, you will want to briefly describe any data manipula
 
 For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. Finally, we select the relevant variables such that our customer's sensitive data are not made public in our report.
 
-```{r}
-# This chunk provides an example of some things you can do with RMarkdown 
-
+```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
 # read in the data (this will only work once you've set up the data!)
-device_data <- read_csv("data-raw/device.Rds")
+cust_sleep_complete <- readRDS("data/cust_sleep_complete.Rds")
 
+cust_sleep_complete <- cust_sleep_complete %>%
+  mutate(emoji_modifier = 
+           if_else(cust_sleep_complete$emoji_modifier=="U+1F3FB", "Light skin tone",
+                   if_else(cust_sleep_complete$emoji_modifier=="U+1F3FC","Medium-Light skin tone",
+                           if_else(cust_sleep_complete$emoji_modifier=="U+1F3FD","Medium skin tone",
+                                   if_else(cust_sleep_complete$emoji_modifier=="U+1F3FE", 
+                                           "Medium-Dark skin tone", if_else(
+                                             cust_sleep_complete$emoji_modifier=="U+1F3FF",
+                                  "Dark skin tone", cust_sleep_complete$emoji_modifier))))))
+
+cust_sleep_complete <- cust_sleep_complete %>%
+  mutate(emoji_modifier = if_else(is.na(cust_sleep_complete$emoji_modifier),
+                                  "Default", cust_sleep_complete$emoji_modifier))
+```
+
+```{r, echo=FALSE, fig.cap="Plot"}
 # create a visualization
-device_data %>% 
-  ggplot(aes(x = ))
+cust_sleep_complete %>%
+  mutate(flags=as.factor(flags)) %>%
+  ggplot() +
+  aes(y=duration, x=flags) +
+  facet_wrap(~emoji_modifier) +
+  geom_boxplot() +
+  ylab("Duration of Sleep (in minutes)") +
+  xlab("Number of flags") +
+  main("Distribution")+
+  coord_flip()
+```
+
+```{r}
 
 ```
+
 
 ## Informative title for section addressing a research question
 
