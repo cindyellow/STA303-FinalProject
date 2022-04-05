@@ -98,7 +98,7 @@ cust_sleep_complete <- cust_sleep_complete %>%
                                   "Default", cust_sleep_complete$emoji_modifier))
 ```
 
-```{r, echo=FALSE, fig.cap="Plot"}
+```{r, echo=FALSE, fig.cap="Barplots that show the distribution of the sleep quality for different number of flags and different emojis used."}
 # create a visualization
 cust_sleep_complete %>%
   mutate(flags=as.factor(flags)) %>%
@@ -108,12 +108,13 @@ cust_sleep_complete %>%
   geom_boxplot() +
   ylab("Duration of Sleep (in minutes)") +
   xlab("Number of flags") +
-  ggtitle("Distribution of ")+
+  ggtitle("Distribution of sleep quality")+
   coord_flip()
 ```
 
-```{r}
-
+```{r, echo=FALSE}
+device_performance_model <- lmer(flags ~ duration + emoji_modifier + (1|sex) + 
+                                   (1|age), data=cust_sleep_complete)
 ```
 
 
