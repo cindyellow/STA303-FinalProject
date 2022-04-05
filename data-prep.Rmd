@@ -202,7 +202,7 @@ cust_sleep_mod <- left_join(cust_sleep_mod, dev_sleep, by="dev_id")
 # Select relevant columns and drop NAs for sex, pronouns, and postcode because
 # they're not the main variable of interest, and there aren't a lot of NAs
 cust_sleep_mod <- cust_sleep_mod %>%
-  subset(select=-c(dev_id, released)) %>%
+  subset(select=-c(dev_id, released, cust_id, dob)) %>%
   drop_na(sex, pronouns, postcode)
 ```
 

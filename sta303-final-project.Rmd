@@ -77,7 +77,11 @@ _For each research question, you will want to briefly describe any data manipula
 
 For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. Finally, we select the relevant variables such that our customer's sensitive data are not made public in our report.
 
-```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
+To address research question 2, we first retrieved device data scraped from https://fitnesstrackerinfohub.netlify.app/, which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. Lastly, we dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question.
+
+```{r}
+# This chunk provides an example of some things you can do with RMarkdown 
+
 # read in the data (this will only work once you've set up the data!)
 cust_sleep_complete <- readRDS("data/cust_sleep_complete.Rds")
 
@@ -136,9 +140,13 @@ _In this section you will summarize your findings across all the research questi
 
 **Warren Zhu**. Warren is a professional Data and Computer Scientist with over 10 years of experience. He was a former researcher at the University of Toronto, specializing in Multi-lingual Natural Language Processing. Having great understanding and experience with many Mathematical and Statistical concepts, he now serves as a consultant in various fields, including (but not limited to) marketing, health care and linguistics.
 
+**Xiaotang (Jeffrey) Zhou**. Some bio stuff here.
+
 ## Code of ethical conduct
 
 _This section should be fairly short, no more than half a page. Assume a general audience, much like your executive summary._
+
+The UofTears team is committed to abiding by ethical guidelines for statistical practice when preparing and analyzing data. We promise to avoid disclosing confidential information without prior permission from our clients, such as data on their customers and devices. Moreover, we seek to make careful conclusions about the data and the investigative questions at hand. In this report, we have listed out all the assumptions we made when constructing the models as well as potential limitations to our research, fully informing the audience of the context surrounding our conclusions. Lastly, we hold responsibility to the society. The goal of this investigation was not only to determine if products could have harmful biases towards certain populations, but also assist the general public in understanding easily how we have obtained those insights.
 
 1. Responsibility to Society: "strive to advance public knowledge and understanding of information...providing assistance in discrediting false or misleading info"
 2. Responsibility to Employers and Clients: avoid disclosure of confidential information without prior written permission
