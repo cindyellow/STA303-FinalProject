@@ -79,9 +79,7 @@ For research question 1, we used the cancensus API to retrieve 2016 median incom
 
 To address research question 2, we first retrieved device data scraped from https://fitnesstrackerinfohub.netlify.app/, which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. Lastly, we dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question.
 
-```{r}
-# This chunk provides an example of some things you can do with RMarkdown 
-
+```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
 # read in the data (this will only work once you've set up the data!)
 cust_sleep_complete <- readRDS("data/cust_sleep_complete.Rds")
 
@@ -110,7 +108,7 @@ cust_sleep_complete %>%
   geom_boxplot() +
   ylab("Duration of Sleep (in minutes)") +
   xlab("Number of flags") +
-  main("Distribution")+
+  ggtitle("Distribution of ")+
   coord_flip()
 ```
 
