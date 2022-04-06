@@ -132,6 +132,8 @@ _In this section you will summarize your findings across all the research questi
 
 ### Strengths and limitations
 
+In the first research question, the UofTears team did not have direct access to customer incomes data and was required to make assumptions on a customer's income based on their postal code. While this generalization allows for reasonable analysis, for a more accurate report on market demographics, the team would need direct customer information. With that said, the UofTears team acknowledges that income is sensitive data and collection of such information may cause user privacy concerns. Moreover, the median income data used in this analysis was attained in 2016. Hence, this number may not be entirely reflective of the customer's income at time of purchase.
+
 \newpage
 # Consultant information
 ## Consultant profiles
@@ -207,7 +209,11 @@ _These appendices should outline in more detail the steps taken to access the fo
 
 ## Accessing Census data on median household income
 
+Median household income data was attain via the Canadian census API. The UofTears team created an account through CensusMapper, followed the proper guidelines of the API for retrievement and credited CensusMapper in our report. This is open data, available to the public. The use of this data complies with guidelines of the Statistics Canada Open Data Licence.
+
 ## Accessing postcode conversion files
+
+Postal code conversion data was retrieved from Census Canada via the University of Toronto portal. The UofTears team comprises of University of Toronto students and hence, had the proper credentials to access the data. In downloading the dataset, the UofTears team has agreed to the license agreement. The source for this information has been acknowledged in this report.
 
 
 __Final advice: KNIT EARLY AND OFTEN!__
