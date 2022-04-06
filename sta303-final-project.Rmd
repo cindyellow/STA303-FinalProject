@@ -83,7 +83,7 @@ For research question 1, we used the cancensus API to retrieve 2016 median incom
 
 ## Informative title for section addressing a research question 2
 
-To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub ((which can be found here))[https://fitnesstrackerinfohub.netlify.app/], which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji_modifier unicodes were also converted to more interprettable labels.
+To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub [which can be found here](https://fitnesstrackerinfohub.netlify.app/), which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji_modifier unicodes were also converted to more interprettable labels.
 
 ```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
 # read in the data (this will only work once you've set up the data!)
@@ -104,52 +104,66 @@ cust_sleep_complete <- cust_sleep_complete %>%
                                   "Default", cust_sleep_complete$emoji_modifier))
 ```
 
-With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that was raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable-using emoji-modifiers to guess each customer's skin tone. Figure 1 depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic, so we decided to fit a linear mixed model.
+With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that was raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable-using emoji-modifiers to guess each customer's skin tone. Figure 1 depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic, so we decided to fit a linear mixed model. The reason why we avoided generalized additive models is because we seeked to maximize interpretability, as we needed to explain our model to our employers.
+
+```{r performance_interaction_or_not, echo=FALSE, eval=FALSE}
+# Model with interaction included
+device_performance_model_1 <- lm(flags ~ duration*emoji_modifier, 
+                                 data=cust_sleep_complete)
+# Model without included
+device_performance_model_2 <- lm(flags ~ duration + emoji_modifier,
+                                 data=cust_sleep_complete)
+
+lmtest::lrtest(device_performance_model_1, device_performance_model_2)
+# Interaction is needed
+```
 
 ```{r age-or-sex, echo=FALSE, eval=FALSE}
 # Model with Sex included
-device_performance_model_1 <- lmer(flags ~ duration + emoji_modifier + (1|sex), 
+device_performance_model_1 <- lmer(flags ~ duration*emoji_modifier + (1|sex), 
                                  data=cust_sleep_complete)
 # Model with Age included
-device_performance_model_2 <- lmer(flags ~ duration + emoji_modifier + 
+device_performance_model_2 <- lmer(flags ~ duration*emoji_modifier + 
                                      (1|age), data=cust_sleep_complete)
 # Model with both Age and Sex included
-device_performance_model_3 <- lmer(flags ~ duration + emoji_modifier + (1|sex) + 
+device_performance_model_3 <- lmer(flags ~ duration*emoji_modifier + (1|sex) + 
                                      (1|age), data=cust_sleep_complete)
 
 lmtest::lrtest(device_performance_model_1, device_performance_model_3)
-# Evidence that Age is needed
+# Evidence that Age is not needed
 
 lmtest::lrtest(device_performance_model_2, device_performance_model_3)
-# Evidence that we don't need sex
+# Evidence that we do not need sex
 ```
 
 ```{r bat_life-or-line, echo=FALSE, eval=FALSE}
 # Model with Sex included
-device_performance_model_1 <- lmer(flags ~ duration + emoji_modifier + (1|line), 
+device_performance_model_1 <- lmer(flags ~ duration*emoji_modifier + (1|line), 
                                  data=cust_sleep_complete)
 # Model with Age included
-device_performance_model_2 <- lmer(flags ~ duration + emoji_modifier + 
-                                     (1|bat_life), data=cust_sleep_complete)
+device_performance_model_2 <- lmer(flags ~ duration*emoji_modifier + (1|bat_life), 
+                                   data=cust_sleep_complete)
 # Model with both Age and Sex included
-device_performance_model_3 <- lmer(flags ~ duration + emoji_modifier + (1|line) + 
+device_performance_model_3 <- lmer(flags ~ duration*emoji_modifier + (1|line) + 
                                      (1|bat_life), data=cust_sleep_complete)
 
 lmtest::lrtest(device_performance_model_1, device_performance_model_3)
 # Evidence that bat_life is not needed
 
 lmtest::lrtest(device_performance_model_2, device_performance_model_3)
-# Evidence that line isn't needed
+# Evidence that line is not needed
 ```
 
 ```{r performance_model, echo=FALSE, warning=FALSE, message=FALSE}
-device_performance_model_final <- lmer(flags ~ duration + emoji_modifier + (1|age),
+device_performance_model_fixed <- lm(flags ~ duration*emoji_modifier,
+                                       data=cust_sleep_complete)
+device_performance_model_mixed <- lmer(flags ~ duration*emoji_modifier+(1|age),
                                        data=cust_sleep_complete)
 ```
 
-As we are trying to do understand if there are discrepancies between the performance of the device (i.e., quality of the data measured) for different sleep sessions, our predicted variable was the number of flags raised for a given sleep session. We were primarily interested in how the skin tone and the sleep quality affected these measurements, so we set the emoji-modifiers and the duration of a sleep session as the fixed effects. After performing many likelihood ratio tests on models with and without various random effects (i.e., the customer's age and gender, as well as the line and battery life of the device), we decided to include age as a random effect in our model.
+As we are trying to do understand if there are discrepancies between the performance of the device (i.e., quality of the data measured) for different sleep sessions, our predicted variable was the number of flags raised for a given sleep session. We were primarily interested in how the skin tone and the sleep quality affected these measurements, so we set the emoji-modifiers and the duration of a sleep session as the fixed effects. An ANOVA test led us to include the interaction between these two variables in our model. This was our baseline model. After performing many likelihood ratio tests on models with and without various random effects (i.e., the customer's age and gender, as well as the line and battery life of the device), we decided to include another model with age as a random effect.
 
-```{r, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=7}
+```{r performance_boxplot, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=6.6}
 # create a visualization
 cust_sleep_complete %>%
   mutate(flags=as.factor(flags)) %>%
@@ -162,6 +176,19 @@ cust_sleep_complete %>%
   ggtitle("Distribution of sleep quality")+
   coord_flip()
 ```
+
+\newpage
+
+There were some very interesting findings from our final models, as well as from our boxplot. First, from the boxplot, we can clearly see that only customers that use the dark skin tone emoji-modifier have experienced a sleep session with more than 22 flags. Similarly, only customers with dark skin tone or medium-dark skin tone modifiers have experienced a sleep session with more than 13 flags.
+
+On to our models.
+
+```{r summary_performance_model, echo=FALSE, eval=FALSE}
+summary(device_performance_model_fixed)
+summary(device_performance_model_mixed)
+```
+
+
 
 
 
@@ -202,7 +229,7 @@ The UofTears team is committed to abiding by ethical guidelines for statistical 
 2. Responsibility to Employers and Clients: avoid disclosure of confidential information without prior written permission
 3. Prevent use of misleading summary of the data and ensure to detail all assumptions and limitations relevant to the data
 
-* _Make at least three relevant statements about your company's approach to ethical statistical consulting. These should be appropriately in line with professional conduct advice like the (Statistical Society of Canada Code of Conduct)[https://ssc.ca/sites/default/files/data/Members/public/Accreditation/ethics_e.pdf] or the (Ethical Guidelines for Statistical Practice from the American Statistical Society)[https://www.amstat.org/ASA/Your-Career/Ethical-Guidelines-for-Statistical-Practice.aspx]. For example, "the customer is always right" ISN'T the type of thing an ethical statistical consultant would include._
+* _Make at least three relevant statements about your company's approach to ethical statistical consulting. These should be appropriately in line with professional conduct advice like the [Statistical Society of Canada Code of Conduct](https://ssc.ca/sites/default/files/data/Members/public/Accreditation/ethics_e.pdf) or the [Ethical Guidelines for Statistical Practice from the American Statistical Society](https://www.amstat.org/ASA/Your-Career/Ethical-Guidelines-for-Statistical-Practice.aspx). For example, "the customer is always right" ISN'T the type of thing an ethical statistical consultant would include._
 *	_Be very careful not to just copy and paste from these other documents! Put things in your own words._
 
 
