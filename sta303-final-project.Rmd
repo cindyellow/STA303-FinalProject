@@ -134,13 +134,17 @@ _In this section you will summarize your findings across all the research questi
 
 In the first research question, the UofTears team did not have direct access to customer incomes data and was required to make assumptions on a customer's income based on their postal code. While this generalization allows for reasonable analysis, for a more accurate report on market demographics, the team would need direct customer information. With that said, the UofTears team acknowledges that income is sensitive data and collection of such information may cause user privacy concerns. Moreover, the median income data used in this analysis was attained in 2016. Hence, this number may not be entirely reflective of the customer's income at time of purchase.
 
+With regards to the second research question, one limiting factor is the presence of missing values for user's emoji modifier, which signifies that they used the default skintone. The UofTears team is thus unable to determine the race/ethnicity of those users, which adds uncertainty and limits the conclusions we were able to make about the relationship between device flags and user race. Similarly, a certain choice of emoji skintone does not necessarily correspond to the user's actual racial identity.
+
+- mention something about data distribution maybe?
+
 \newpage
 # Consultant information
 ## Consultant profiles
 
 *Complete this section with a brief bio for each member of your group. If you are completing the project individually, you only need to complete one for yourself. In that case, change the title of this section to 'Consultant profile' instead. Examples below. This section is only marked for completeness, clarity and professionalism, not 'truth' so you can write it as if we're a few years in the future. Put your current degree in as completed and/or add your first choice grad school program, whatever you like. What skills related skills would you most like to highlight? What job title do you want?*
 
-**Chloe Nguyen**. Chloe is a third-year Data Science and Computer Science student at the University of Toronto. She specializes in data science and machine learning. Chloe has experience working in project management and software devlopment at Microsoft's Cloud and AI team- where she collaborated with internal and external stakeholders to create project plans, build prototypes and develop solutions. Chloe is an avid member of UofT's Computer Science community, having lead various student unions and clubs-such as President of Women in Computer Science, Treasurer of the Computer Science Student Union and Sponsorship Executive of Neurotech.
+**Chloe Nguyen**. Chloe is a third-year Data Science and Computer Science student at the University of Toronto. She specializes in data science and machine learning. Chloe has experience working in project management and software development at Microsoft's Cloud and AI team- where she collaborated with internal and external stakeholders to create project plans, build prototypes and develop solutions. Chloe is an avid member of UofT's Computer Science community, having lead various student unions and clubs-such as President of Women in Computer Science, Treasurer of the Computer Science Student Union and Sponsorship Executive of Neurotech.
 
 **Shih-Ting (Cindy) Huang**. Cindy is currently a third-year undergraduate studying Data Science at the University of Toronto. With a passion for improving user experience through machine learning, she actively seeks ways to implement different theoretical concepts in real life for business-oriented problems. Her skills in multidisciplinary fields, including data science, marketing, and linguistics, have enabled her to obtain a holistic perspective on multiple projects and devise creative solutions with a user-guided mindset.
 
@@ -207,9 +211,11 @@ _These appendices should outline in more detail the steps taken to access the fo
 
 ## Web scraping industry data on fitness tracker devices
 
+Data on fitness tracker devices was scraped from the Fitness tracker info hub. The UofTears team first consulted its scraping permissions and provided our user agent information to clarify our intentions with the obtained data. Only absolutely necessary data was saved from the webpage. Our team sought not to duplicate the dataset for this study and instead only variables relevant for this study.
+
 ## Accessing Census data on median household income
 
-Median household income data was attain via the Canadian census API. The UofTears team created an account through CensusMapper, followed the proper guidelines of the API for retrievement and credited CensusMapper in our report. This is open data, available to the public. The use of this data complies with guidelines of the Statistics Canada Open Data Licence.
+Median household income data was attained via the Canadian census API. The UofTears team created an account through CensusMapper, followed the proper guidelines of the API for retrievement and credited CensusMapper in our report. This is open data, available to the public. The use of this data complies with guidelines of the Statistics Canada Open Data Licence.
 
 ## Accessing postcode conversion files
 
