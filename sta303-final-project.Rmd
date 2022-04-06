@@ -104,10 +104,50 @@ cust_sleep_complete <- cust_sleep_complete %>%
                                   "Default", cust_sleep_complete$emoji_modifier))
 ```
 
-With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that was raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable-using emoji-modifiers to guess each customer's skin tone. Figure 1 (please see the next page) depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic, so we decided to fit a linear mixed model.
+With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that was raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable-using emoji-modifiers to guess each customer's skin tone. Figure 1 depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic, so we decided to fit a linear mixed model.
 
-As we are trying to do understand if there are discrepancies between the performance of the device (i.e., quality of the data measured) for different sleep sessions, our predicted variable was the number of flags raised for a given sleep session. We were primarily interested in how the skin tone and the sleep quality affected these measurements, so we set the emoji-modifiers and the duration of a sleep session as the fixed effects. As the gender and the age of an individual may be closely related to external factors that also affect the device's measurements, we performed several likelihood ratio tests on these variables before finally setting them as our random effects for our model.
+```{r age-or-sex, echo=FALSE, eval=FALSE}
+# Model with Sex included
+device_performance_model_1 <- lmer(flags ~ duration + emoji_modifier + (1|sex), 
+                                 data=cust_sleep_complete)
+# Model with Age included
+device_performance_model_2 <- lmer(flags ~ duration + emoji_modifier + 
+                                     (1|age), data=cust_sleep_complete)
+# Model with both Age and Sex included
+device_performance_model_3 <- lmer(flags ~ duration + emoji_modifier + (1|sex) + 
+                                     (1|age), data=cust_sleep_complete)
 
+lmtest::lrtest(device_performance_model_1, device_performance_model_3)
+# Evidence that Age is needed
+
+lmtest::lrtest(device_performance_model_2, device_performance_model_3)
+# Evidence that we don't need sex
+```
+
+```{r bat_life-or-line, echo=FALSE, eval=FALSE}
+# Model with Sex included
+device_performance_model_1 <- lmer(flags ~ duration + emoji_modifier + (1|line), 
+                                 data=cust_sleep_complete)
+# Model with Age included
+device_performance_model_2 <- lmer(flags ~ duration + emoji_modifier + 
+                                     (1|bat_life), data=cust_sleep_complete)
+# Model with both Age and Sex included
+device_performance_model_3 <- lmer(flags ~ duration + emoji_modifier + (1|line) + 
+                                     (1|bat_life), data=cust_sleep_complete)
+
+lmtest::lrtest(device_performance_model_1, device_performance_model_3)
+# Evidence that bat_life is not needed
+
+lmtest::lrtest(device_performance_model_2, device_performance_model_3)
+# Evidence that line isn't needed
+```
+
+```{r performance_model, echo=FALSE, warning=FALSE, message=FALSE}
+device_performance_model_final <- lmer(flags ~ duration + emoji_modifier + (1|age),
+                                       data=cust_sleep_complete)
+```
+
+As we are trying to do understand if there are discrepancies between the performance of the device (i.e., quality of the data measured) for different sleep sessions, our predicted variable was the number of flags raised for a given sleep session. We were primarily interested in how the skin tone and the sleep quality affected these measurements, so we set the emoji-modifiers and the duration of a sleep session as the fixed effects. After performing many likelihood ratio tests on models with and without various random effects (i.e., the customer's age and gender, as well as the line and battery life of the device), we decided to include age as a random effect in our model.
 
 ```{r, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=7}
 # create a visualization
@@ -123,10 +163,7 @@ cust_sleep_complete %>%
   coord_flip()
 ```
 
-```{r, echo=FALSE}
-device_performance_model <- lmer(flags ~ duration + emoji_modifier + (1|sex) + 
-                                   (1|age), data=cust_sleep_complete)
-```
+
 
 
 ## Discussion
