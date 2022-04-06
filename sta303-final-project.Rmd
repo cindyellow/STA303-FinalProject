@@ -72,7 +72,7 @@ This report provides customer and product analytics on MINGAR's fitness tracking
 
 -  What are the demographic characteristics associated with customers of the new affordable product lines, "Active" and Advance" vs. customers of previous fitness wearable lines? This question aims to investigate whether the affordable product lines managed to successfully attract new customers of the lower-income target market.
 
-- Are there unusual discrepancies in the quality of the data measured by MINGAR fitness wearables for customers of different races that get differing amounts of sleep?
+- Are there unusual discrepancies in the quality of the data measured by MINGAR fitness wearables for customers of different races (specifically, those with darker skin tones) and differing amounts of sleep?
 
 
 ## Informative title for section addressing research question 1
@@ -84,12 +84,6 @@ For research question 1, we used the cancensus API to retrieve 2016 median incom
 ## Informative title for section addressing a research question 2
 
 To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub ((which can be found here))[https://fitnesstrackerinfohub.netlify.app/], which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji_modifier unicodes were also converted to more interprettable labels.
-
-Below is a plot (blah blah blah).
-
-
-As we are primarily interested in finding measuring the quality of the data, we have chosen to set number of flags as our predicted value. Naturally, as we are trying to understand how the race of a customer and their amount of sleep can affect the quality of the data measured by the device, we would set `emoji_modifier` and `duration` as our fixed random variables. After performing several likelihood ratio tests, we decided to also add `sex` and `age` as random variables.
-
 
 ```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
 # read in the data (this will only work once you've set up the data!)
@@ -110,7 +104,12 @@ cust_sleep_complete <- cust_sleep_complete %>%
                                   "Default", cust_sleep_complete$emoji_modifier))
 ```
 
-```{r, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=8}
+With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that was raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable-using emoji-modifiers to guess each customer's skin tone. Figure 1 (please see the next page) depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic, so we decided to fit a linear mixed model.
+
+As we are trying to do understand if there are discrepancies between the performance of the device (i.e., quality of the data measured) for different sleep sessions, our predicted variable was the number of flags raised for a given sleep session. We were primarily interested in how the skin tone and the sleep quality affected these measurements, so we set the emoji-modifiers and the duration of a sleep session as the fixed effects. As the gender and the age of an individual may be closely related to external factors that also affect the device's measurements, we performed several likelihood ratio tests on these variables before finally setting them as our random effects for our model.
+
+
+```{r, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=7}
 # create a visualization
 cust_sleep_complete %>%
   mutate(flags=as.factor(flags)) %>%
