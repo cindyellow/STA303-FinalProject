@@ -62,15 +62,18 @@ _This part of the report is much more comprehensive than the executive summary. 
 
 
 ## Introduction
+<!-- _Provide a brief introduction to your report and outline what the report will cover. This section is valuable for setting scope and expectations. _ -->
 
-_Provide a brief introduction to your report and outline what the report will cover. This section is valuable for setting scope and expectations. _
+This report provides customer and product analytics on Mingwar's fitness tracking wearable devices with the goal of delivering insights for better product strategizing. To better grasp the customer market of Mingwar's new affordable lines- 'Active' and 'Advance', the UofTears team details demographic characteristics of new customers that these products have attracted thus far- with a particular focus on the targeted lower-income customer segment. Additionally, this report discusses the discrepancy in product performance for customer of diverse races and highlights underlying issues that this presents. The analysis was conducted with respect to ethical concerns and a summary of UofTear's ethical code of conduct is included in the report.
+
 
 ### Research questions
-_Use bullet points to to describe the research questions you are going to address. Write in full sentences._
+<!-- _Use bullet points to to describe the research questions you are going to address. Write in full sentences._ -->
 
-TO BE REPHRASED
-- Who are our new customers? How are buyers of the newer and more affordable 'Active' and 'Advance' products different to our traditional customers? 
-- Is there a difference in device performance for users of different skin color, particularly with respect to sleep scores?
+-  What are the demographic characteristics associated with customers of the new affordable product lines, "Active" and Advance" vs. customers of previous fitness wearable lines? This question aims to investigate whether the affordable product lines managed to successfully attract new customers of the lower-income target market.
+
+- Are there unusual discrepancies in recorded sleep quality- as measured by Mingwar fitness wearables- for customers of different races and does this indicate underlying bias in device performance? 
+
 
 ## Informative title for section addressing research question 1
 
