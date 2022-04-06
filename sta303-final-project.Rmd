@@ -68,15 +68,17 @@ _Provide a brief introduction to your report and outline what the report will co
 ### Research questions
 _Use bullet points to to describe the research questions you are going to address. Write in full sentences._
 
+TO BE REPHRASED
 - Who are our new customers? How are buyers of the newer and more affordable 'Active' and 'Advance' products different to our traditional customers? 
 - Is there a difference in device performance for users of different skin color, particularly with respect to sleep scores?
 
-## Informative title for section addressing a research question
+## Informative title for section addressing research question 1
 
 _For each research question, you will want to briefly describe any data manipulation, show some exploratory plots/summary tables, report on any methods you use (i.e. models you fit) and the conclusions you draw from these_
 
 For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. Finally, we select the relevant variables such that our customer's sensitive data are not made public in our report.
 
+## Research Question 2
 To address research question 2, we first retrieved device data scraped from https://fitnesstrackerinfohub.netlify.app/, which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. Lastly, we dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question.
 
 ```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
@@ -159,6 +161,39 @@ The UofTears team is committed to abiding by ethical guidelines for statistical 
 # References
 
 _You don't need to cite course materials, but consider all the the places you got data from, as well as the packages used and R itself. These are all things you should consider citing. Likewise, you might use some external resources on the emoji skin tones/Fitzpatrick scale, etc._
+Achim Zeileis, Torsten Hothorn (2002). Diagnostic Checking in Regression
+  Relationships. R News 2(3), 7-10. URL https://CRAN.R-project.org/doc/Rnews/
+
+Dmytro Perepolkin (2019). polite: Be Nice on the Web. R package version 0.1.1.
+  https://CRAN.R-project.org/package=polite
+  
+Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). Fitting Linear
+  Mixed-Effects Models Using lme4. Journal of Statistical Software, 67(1), 1-48.
+  doi:10.18637/jss.v067.i01.
+
+Fitness tracker info hub. (n.d.). Retrieved April 3, 2022, 
+  from https://fitnesstrackerinfohub.netlify.app/. 
+
+Hadley Wickham (2021). rvest: Easily Harvest (Scrape) Web Pages. R package
+  version 1.0.2. https://CRAN.R-project.org/package=rvest
+  
+Postal code conversion file. (2016). Toronto. Retrieved April 3, 2022, 
+  from https://mdl.library.utoronto.ca/collections/numeric-data/census-canada/postal-code-conversion-file. 
+
+R Core Team (2021). R: A language and environment for statistical computing. R
+  Foundation for Statistical Computing, Vienna, Austria. URL
+  https://www.R-project.org/.
+
+Unicode, Inc. (n.d.). Full Emoji Modifier Sequences, v14.0. Unicode, Inc. 
+  Retrieved April 4, 2022, from 
+  https://unicode.org/emoji/charts/full-emoji-modifiers.html. 
+
+von Bergmann, J., &amp; Cervantes, A. (2022, February 9). Population Density by 
+  CensusMapper. Census Mapper. map. Retrieved April 3, 2022, 
+  from https://censusmapper.ca/. 
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source
+  Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
 
 \newpage
 # Appendix
