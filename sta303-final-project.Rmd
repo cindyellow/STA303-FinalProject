@@ -24,7 +24,7 @@ library(polite)
 library(lmtest)
 
 # this should suppress all code and messages
-knitr::opts_chunk$set(include=FALSE)
+knitr::opts_chunk$set(include=TRUE)
 ```
 
 # General comments (you can delete this section)
@@ -64,7 +64,7 @@ _This part of the report is much more comprehensive than the executive summary. 
 ## Introduction
 <!-- _Provide a brief introduction to your report and outline what the report will cover. This section is valuable for setting scope and expectations. _ -->
 
-This report provides customer and product analytics on Mingwar's fitness tracking wearable devices with the goal of delivering insights for better product strategizing. To better grasp the customer market of Mingwar's new affordable lines- 'Active' and 'Advance', the UofTears team details demographic characteristics of new customers that these products have attracted thus far- with a particular focus on the targeted lower-income customer segment. Additionally, this report discusses the discrepancy in product performance for customer of diverse races and highlights underlying issues that this presents. The analysis was conducted with respect to ethical concerns and a summary of UofTear's ethical code of conduct is included in the report.
+This report provides customer and product analytics on MINGAR's fitness tracking wearable devices with the goal of delivering insights for better product strategizing. To better grasp the customer market of MINGAR's new affordable lines- 'Active' and 'Advance', the UofTears team details demographic characteristics of new customers that these products have attracted thus far- with a particular focus on the targeted lower-income customer segment. Additionally, this report discusses the discrepancy in product performance for customer of diverse races and highlights underlying issues that this presents. The analysis was conducted with respect to ethical concerns and a summary of UofTear's ethical code of conduct is included in the report.
 
 
 ### Research questions
@@ -72,7 +72,7 @@ This report provides customer and product analytics on Mingwar's fitness trackin
 
 -  What are the demographic characteristics associated with customers of the new affordable product lines, "Active" and Advance" vs. customers of previous fitness wearable lines? This question aims to investigate whether the affordable product lines managed to successfully attract new customers of the lower-income target market.
 
-- Are there unusual discrepancies in recorded sleep quality- as measured by Mingwar fitness wearables- for customers of different races and does this indicate underlying bias in device performance? 
+- Are there unusual discrepancies in the quality of the data measured by MINGAR fitness wearables for customers of different races that get differing amounts of sleep?
 
 
 ## Informative title for section addressing research question 1
@@ -81,8 +81,15 @@ _For each research question, you will want to briefly describe any data manipula
 
 For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. Finally, we select the relevant variables such that our customer's sensitive data are not made public in our report.
 
-## Research Question 2
-To address research question 2, we first retrieved device data scraped from https://fitnesstrackerinfohub.netlify.app/, which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. Lastly, we dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question.
+## Informative title for section addressing a research question 2
+
+To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub ((which can be found here))[https://fitnesstrackerinfohub.netlify.app/], which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji_modifier unicodes were also converted to more interprettable labels.
+
+Below is a plot (blah blah blah).
+
+
+As we are primarily interested in finding measuring the quality of the data, we have chosen to set number of flags as our predicted value. Naturally, as we are trying to understand how the race of a customer and their amount of sleep can affect the quality of the data measured by the device, we would set `emoji_modifier` and `duration` as our fixed random variables. After performing several likelihood ratio tests, we decided to also add `sex` and `age` as random variables.
+
 
 ```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
 # read in the data (this will only work once you've set up the data!)
@@ -103,7 +110,7 @@ cust_sleep_complete <- cust_sleep_complete %>%
                                   "Default", cust_sleep_complete$emoji_modifier))
 ```
 
-```{r, echo=FALSE, fig.cap="Barplots that show the distribution of the sleep quality for different number of flags and different emojis used."}
+```{r, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=8}
 # create a visualization
 cust_sleep_complete %>%
   mutate(flags=as.factor(flags)) %>%
@@ -121,9 +128,6 @@ cust_sleep_complete %>%
 device_performance_model <- lmer(flags ~ duration + emoji_modifier + (1|sex) + 
                                    (1|age), data=cust_sleep_complete)
 ```
-
-
-## Informative title for section addressing a research question
 
 
 ## Discussion
