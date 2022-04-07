@@ -94,7 +94,7 @@ MINGAR is a company that produces fitness tracking wearable devices. As the wear
 
 -  The UofTears team did not have direct access to customer information such as income. Instead, customer income was estimated using the median income for their area via postal code.
 
--  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly reflect customer income at the time of product purchase.
+-  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly reflect current customer income.
 
 -  Emoji skin tone is not an absolute indicator of a user's race or ethnicity, which adds uncertainty to conclusions on the relationship between device performance and skin tone.
 
@@ -439,7 +439,7 @@ These results suggest that there is a indeed an association between the choice o
 
 The UofTears team prides ourselves on interpretability of our models. Whenever possible, the team makes conscious effort to work with models that are human-understandable. In fact,  all finalized models in this report are easily interpretable. Interpretability is important as understanding the decisions an algorithm takes can help to identify underlying prejudice in the algorithm.
 
-With that said, the UofTears team faced a few limitations during this analysis. In the first research question, the team did not have direct access to customer incomes data and was required to make assumptions on a customer's income based on their postal code. While this generalization allows for reasonable analysis, for a more accurate report on market demographics, the team would need direct customer information. With that said, the UofTears team acknowledges that income is sensitive data and collection of such information may cause user privacy concerns. Moreover, the median income data used in this analysis was attained in 2016. Hence, this number may not be entirely reflective of the customer's income at time of purchase.
+With that said, the UofTears team faced a few limitations during this analysis. In the first research question, the team did not have direct access to customer incomes data and was required to make assumptions on a customer's income based on their postal code. While this generalization allows for reasonable analysis, for a more accurate report on market demographics, the team would need direct customer information. With that said, the UofTears team acknowledges that income is sensitive data and collection of such information may cause user privacy concerns. Moreover, the median income data used in this analysis was attained in 2016. Hence, this number may not be entirely reflective of the customer's current income.
 
 With regards to the second research question, one limiting factor is the presence of missing values for user's emoji modifier, which signifies that they used the default skin tone. The UofTears team is thus unable to determine the race/ethnicity of those users, which adds uncertainty and limits the conclusions we were able to make about the relationship between device flags and user race. Similarly, a certain choice of emoji skin tone does not necessarily correspond to the user's actual racial identity.
 
