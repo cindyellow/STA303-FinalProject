@@ -220,7 +220,7 @@ Before building preliminary models, recall that as we are trying to gain insight
 
 Now, we have the tools to build our preliminary models. Since the response is binary and we have a random effect, we must use a generalized linear mixed model (GLMM) for this data. We start by fitting a GLMM with all of the potential predictors that we have so far, including pronouns, median income, and age. Then, we create an auxiliary model that doesn't include pronouns as a predictor and another that doesn't include age as a predictor, since in the previous exploratory data analysis we could not determine whether these would be good predictors just based on eyeballing the boxplots. 
 
-```{r, echo = FALSE, eval = FALSE}
+```{r, echo = FALSE, include = FALSE}
 full_mod <- lme4::glmer(is_new ~ pronouns + scales::rescale(age) + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
 no_age <- lme4::glmer(is_new ~ pronouns + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
 no_pronouns <- lme4::glmer(is_new ~ scales::rescale(income) + scales::rescale(age) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
@@ -242,17 +242,20 @@ ests <- format(round(exp(summary(finalmod)$coeff)[,1], 2), nsmall = 2)
 confint <- confint(finalmod)
 cis <- format(round(exp(confint),2)[-1,], nsmall = 2)
 cis_pretty <- str_c("(", trimws(cis[,1]), ", ", cis[,2], ")")
+```
+
+
+```{r, echo = FALSE}
+
 my_pretty_table <- cbind(ests, cis_pretty)
 rownames_for_table <- c("Baseline odds", "Rescaled Age", "Rescaled Median Income")
 colnames_for_table <- c("Estimate", "95% CI")
 rownames(my_pretty_table) <- rownames_for_table
 colnames(my_pretty_table) <- colnames_for_table
-```
 
-```{r, echo = FALSE}
 my_pretty_table %>%
-  kable(caption = "Estimates of Odds Ratios and Corresponding 95% Confidence Intervals") %>%
-  kable_styling()
+  knitr::kable(caption = "Estimates of Odds Ratios and Corresponding 95 Percent Confidence Intervals")
+
 ```
 
 First, note that we were forced to rescale age and median income in order to allow R to properly build the model. These variables were rescaled with the following formulae: 
