@@ -101,7 +101,7 @@ MINGAR is a company that produces fitness tracking wearable devices. As the wear
 
 ## Visuals
 
-```{r, echo = FALSE, fig.cap="Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+```{r, echo = FALSE}
 # Draw boxplots describing the distribution of median incomes for customers
 # in both the new and traditional groups
 inc <- cust_dev_info %>%
@@ -112,12 +112,14 @@ inc <- cust_dev_info %>%
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
   ggtitle("The Distribution of Median Income \nof the Sampled Customers") +
   xlab("Median Income (in Canadian dollars)") +
+    labs(caption = "Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').") +
   theme_minimal() +
   coord_fixed(ratio=25000) + 
-  theme(plot.title = element_text(size = 12, hjust = 0.5))
+  theme(plot.title = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text(face = "italic", hjust = 0))
 ```
 
-```{r, echo = FALSE, fig.cap="Boxplots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+```{r, echo = FALSE}
 # Draw boxplots describing the distribution of ages for customers
 # in both the new and traditional groups
 age <- cust_dev_info %>%
@@ -128,12 +130,15 @@ age <- cust_dev_info %>%
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
   ggtitle("The Distribution of Age \nof the Sampled Customers") +
   xlab("Age (in years)") +
+  labs(caption = "Boxplots displaying ages of customers who purchased MINGAR's new affordable line \n(i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').") +
   theme_minimal() +
   coord_fixed(ratio=10) + 
-  theme(plot.title = element_text(size = 12, hjust = 0.5))
+  theme(plot.title = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text(face = "italic", hjust = 0))
+inc
 ```
 
-```{r performance_scatterplot, echo=FALSE, fig.cap="Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier.", message=FALSE, warning=FALSE}
+```{r performance_scatterplot, echo=FALSE, message=FALSE, warning=FALSE}
 sleep <- cust_sleep_complete %>%
   ggplot() +
   aes(x=duration, y=flags) +
@@ -142,29 +147,18 @@ sleep <- cust_sleep_complete %>%
   xlab("Duration of Sleep (in minutes)") +
   ylab("Number of flags") +
   ggtitle("Distribution of sleep quality") +
+  labs(caption = "Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier.") +
   theme_minimal() +
-  theme(plot.title = element_text(size = 12, hjust = 0.5)) #+
-  #geom_smooth(method=lm)
+  theme(plot.title = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text(face = "italic", hjust = 0)) 
 
-  # Adding geom_smooth seems yikes
-```
-
-```{r performance_histogram, echo=FALSE, fig.cap="Histograms showing the distribution of the number of errors that occur in each sleep session.", message=FALSE, warning=FALSE, eval=F}
-# cust_sleep_complete %>%
-#   ggplot() +
-#   aes(x=flags) +
-#   facet_wrap(~emoji_modifier) +
-#   geom_histogram() +
-#   xlab("Number of flags") +
-#   ggtitle("Distribution of flags per sleep session")
+sleep
 ```
 
 # ADD CAPTION DONT FORGET
 ```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.height=7}
-# ADD CAPTION DONT FORGET
 library("gridExtra")
 library(grid)
-# grid.newpage()
 # Create layout : nrow = 2, ncol = 2
 pushViewport(viewport(layout = grid.layout(2, 2)))
 # A helper function to define a region on the layout
