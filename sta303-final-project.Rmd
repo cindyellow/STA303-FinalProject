@@ -73,15 +73,22 @@ device_performance_model_mixed <- lmer(flags ~ duration*emoji_modifier+(1|age),
 
 ## Background & Aim
 
-Filler.
+MINGAR is a company that produces fitness tracking wearable devices. As the wearables market expand, the company has released a new line of products at a lower price - 'Active' and 'Advance' - to compete with other businesses in the industry, namely Bitfit. In order to assess MINGAR's current standing in the market, the aim of this study is to determine the user demographic of its new products as well as investigate if any of its products has performance issues related to sleep tracking for users of certain skin colors.
+
 
 ## Key Findings
 
-- The new affordable product lines, "Active" and "Advance", have attracted customers that are located in lower income regions and are slightly older in age in comparison to constomers of MINGAR's other lines.
+-  The new affordable product lines, "Active" and "Advance", have attracted customers that are located in lower income regions and are slightly older in age in comparison to constomers of MINGAR's other lines.
 
-- For every `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` Canadian dollars increase in a customer's median region income, the odds of that customer purchasing a device from MINGAR's affordable line over a device from MINGAR's other lines decreases by roughly 96%.
+-  For every `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` Canadian dollars increase in a customer's median region income, the odds of that customer purchasing a device from MINGAR's affordable line over a device from MINGAR's other lines decreases by roughly 96%.
 
-- For every `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in customer age, the odds of that customer purchasing a device from MINGAR's affordable line ('Active' or 'Advance') over a device from MINGAR's other lines increases by about 46%. 
+-  For every `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in customer age, the odds of that customer purchasing a device from MINGAR's affordable line ('Active' or 'Advance') over a device from MINGAR's other lines increases by about 46%. 
+
+-  The maximum number of flags per a sleep session is higher for customers that use darker skin tone emoji modifiers compared to those that use lighter or default skin tone. 
+
+-  Compared to customers that use light skin tone modifier, those that use dark skin tone have on average 1161,65% more increase in the number of flags per one more minute of sleep. Similarly, those that use medium-dark skin tone modifiers have on average 734.27% more increase than light skin tone emoji users.
+
+-  The average increase in the number of flags per one more minute of sleep across users of default, light, medium-light, and medium skin tone is 24.55% of the average increase across medium-dark and dark skin tone users.
 
 ## Limitations
 
@@ -89,44 +96,50 @@ Filler.
 
 -  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly align with customer income at time of product purchase.
 
+-  Emoji skin tone is not an absolute indicator of a user's race or ethnicity, which adds uncertainty to conclusions on the relationship between device performance and skin tone.
+
 
 ## Visuals
 
-```{r, echo = FALSE, fig.cap="Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers').", out.height="50%"}
-cust_dev_info %>%
+```{r, echo = FALSE, fig.cap="Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').", out.height="50%"}
+inc <- cust_dev_info %>%
   ggplot(aes(x = income)) +
   geom_boxplot() +
   facet_wrap(~is_new, 
              nrow = 2,
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
-  ggtitle("The Distribution of Median Income of the Sampled Customers") +
+  ggtitle("The Distribution of Median Income \nof the Sampled Customers") +
   xlab("Median Income") +
   theme_minimal() +
-  coord_fixed(ratio=25000)
+  coord_fixed(ratio=25000) + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 ```
 
-```{r, echo = FALSE, fig.cap="Boxplots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
-cust_dev_info %>%
+```{r, echo = FALSE, fig.cap="Boxplots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+age <- cust_dev_info %>%
   ggplot(aes(x = age)) +
   geom_boxplot() +
   facet_wrap(~is_new, 
              nrow = 2,
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
-  ggtitle("The Distribution of Age of the Sampled Customers") +
+  ggtitle("The Distribution of Age \nof the Sampled Customers") +
   xlab("Age") +
   theme_minimal() +
-  coord_fixed(ratio=10)
+  coord_fixed(ratio=10) + 
+  theme(plot.title = element_text(size = 12, hjust = 0.5))
 ```
 
 ```{r performance_scatterplot, echo=FALSE, fig.cap="Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier.", message=FALSE, warning=FALSE, out.height="50%"}
-cust_sleep_complete %>%
+sleep <- cust_sleep_complete %>%
   ggplot() +
   aes(x=duration, y=flags) +
   facet_wrap(~emoji_modifier) +
   geom_point() +
   xlab("Duration of Sleep (in minutes)") +
   ylab("Number of flags") +
-  ggtitle("Distribution of sleep quality") #+
+  ggtitle("Distribution of sleep quality") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12, hjust = 0.5)) #+
   #geom_smooth(method=lm)
 
   # Adding geom_smooth seems yikes
@@ -142,6 +155,22 @@ cust_sleep_complete %>%
 #   ggtitle("Distribution of flags per sleep session")
 ```
 
+```{r}
+library(cowplot)
+title <- ggdraw() + 
+  draw_label(
+    "Graphs",
+    fontface = 'bold',
+    x = 0.5,
+    hjust = 0.5
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+plot_grid(title, inc, age, sleep, ncol=2)
+```
 
 
 \newpage
@@ -345,7 +374,8 @@ cust_sleep_complete %>%
   ylab("Duration of Sleep (in minutes)") +
   xlab("Number of flags") +
   ggtitle("Distribution of sleep quality")+
-  coord_flip()
+  coord_flip()+
+  theme_minimal()
 ```
 
 \newpage
@@ -393,13 +423,17 @@ Taking a look at the customer base of the new affordable lines ("Active" and Adv
 
 From this, we can conclude that the new affordable lines have attracted customers that are located in lower income regions and are slightly older in age in comparison to the consumer base of MINGAR's other lines. Hence, the affordable lines have successfully attracted new customers of a lower income target market.
 
+Next, we examined the relationship between emoji skin tone modifier & sleep session duration with the number of flags present during that session, which could occur due to device error or data quality issues. We found that customers that use dark skin tone modifiers can experience more than 22 flags per sleep session whereas those using default or lighter skin tones experience at most 12 flags. On average, the number of flags for users with dark skin tone emoji modifiers increase by 0.035 with an additional minute in sleep duration. In comparison, those with light skin tone only see an average increase of 0.0030 in number of flags for one more minute of sleep.
+
+These results suggest that there is a indeed an association between the choice of skin tone for emoji modifiers and the quality of sleep data collected for MINGAR's devices, specifically that there seems to be more issues collecting data for longer sleep sessions of customers with darker skin tone emoji modifiers.
+
 ### Strengths and limitations
 
 The UofTears team prides ourselves on interpretability of our models. Whenever possible, the team makes conscious effort to work with models that are human-understandable. In fact,  all finalized models in this report are easily interpretable. Interpretability is important as understanding the decisions an algorithm takes can help to identify underlying prejudice in the algorithm.
 
 With that said, the UofTears team faced a few limitations during this analysis. In the first research question, the team did not have direct access to customer incomes data and was required to make assumptions on a customer's income based on their postal code. While this generalization allows for reasonable analysis, for a more accurate report on market demographics, the team would need direct customer information. With that said, the UofTears team acknowledges that income is sensitive data and collection of such information may cause user privacy concerns. Moreover, the median income data used in this analysis was attained in 2016. Hence, this number may not be entirely reflective of the customer's income at time of purchase.
 
-With regards to the second research question, one limiting factor is the presence of missing values for user's emoji modifier, which signifies that they used the default skintone. The UofTears team is thus unable to determine the race/ethnicity of those users, which adds uncertainty and limits the conclusions we were able to make about the relationship between device flags and user race. Similarly, a certain choice of emoji skintone does not necessarily correspond to the user's actual racial identity.
+With regards to the second research question, one limiting factor is the presence of missing values for user's emoji modifier, which signifies that they used the default skin tone. The UofTears team is thus unable to determine the race/ethnicity of those users, which adds uncertainty and limits the conclusions we were able to make about the relationship between device flags and user race. Similarly, a certain choice of emoji skin tone does not necessarily correspond to the user's actual racial identity.
 
 <!-- - mention something about data distribution maybe? -->
 
