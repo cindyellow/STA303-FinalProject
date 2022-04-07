@@ -73,7 +73,7 @@ device_performance_model_mixed <- lmer(flags ~ duration*emoji_modifier+(1|age),
 
 ## Background & Aim
 
-MINGAR is a company that produces fitness tracking wearable devices. As the wearables market expand, the company has released a new line of products at a lower price - 'Active' and 'Advance' - to compete with other businesses in the industry, namely Bitfit. In order to assess MINGAR's current standing in the market, the aim of this study is to determine the user demographic of its new products as well as investigate if any of its products has performance issues related to sleep tracking for users of certain skin colors.
+MINGAR is a company that produces fitness tracking wearable devices. As the wearables market expands, the company has released a new line of products at a lower price - 'Active' and 'Advance' - to compete with other businesses in the industry, namely Bitfit. In order to assess MINGAR's current standing in the market, the aim of this study is to determine the user demographic of its new products as well as investigate if any of its products have performance issues related to sleep tracking for users of certain skin colors.
 
 
 ## Key Findings
@@ -82,11 +82,11 @@ MINGAR is a company that produces fitness tracking wearable devices. As the wear
 
 -  For every `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` Canadian dollars increase in a customer's median region income, the odds of that customer purchasing a device from MINGAR's affordable line over a device from MINGAR's other lines decreases by roughly 96%.
 
--  For every `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in customer age, the odds of that customer purchasing a device from MINGAR's affordable line ('Active' or 'Advance') over a device from MINGAR's other lines increases by about 46%. 
+-  For every `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in customer age, the odds of that customer purchasing a device from MINGAR's affordable line over a device from MINGAR's other lines increases by about 46%. 
 
--  The maximum number of flags per a sleep session is higher for customers that use darker skin tone emoji modifiers compared to those that use lighter or default skin tone. 
+-  The maximum number of flags per sleep session is higher for customers that use darker skin tone emoji modifiers compared to those that use lighter or default skin tone. 
 
--  Compared to customers that use light skin tone modifier, those that use dark skin tone have on average 1161,65% more increase in the number of flags per one more minute of sleep. Similarly, those that use medium-dark skin tone modifiers have on average 734.27% more increase than light skin tone emoji users.
+-  Compared to customers that use the light skin tone modifier, those that use the dark skin tone have on average 10.6 times 1061.65% more increase in the number of flags per one more minute of sleep. Similarly, those that use the medium-dark skin tone modifiers have on average 6.3 times 634.27% more increase than the light skin tone emoji users.
 
 -  The average increase in the number of flags per one more minute of sleep across users of default, light, medium-light, and medium skin tone is 24.55% of the average increase across medium-dark and dark skin tone users.
 
@@ -94,14 +94,14 @@ MINGAR is a company that produces fitness tracking wearable devices. As the wear
 
 -  The UofTears team did not have direct access to customer information such as income. Instead, customer income was estimated using the median income for their area via postal code.
 
--  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly align with customer income at time of product purchase.
+-  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly reflect customer income at the time of product purchase.
 
 -  Emoji skin tone is not an absolute indicator of a user's race or ethnicity, which adds uncertainty to conclusions on the relationship between device performance and skin tone.
 
 
 ## Visuals
 
-```{r, echo = FALSE, fig.cap="Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').", out.height="50%"}
+```{r, echo = FALSE, fig.cap="Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
 inc <- cust_dev_info %>%
   ggplot(aes(x = income)) +
   geom_boxplot() +
@@ -129,7 +129,7 @@ age <- cust_dev_info %>%
   theme(plot.title = element_text(size = 12, hjust = 0.5))
 ```
 
-```{r performance_scatterplot, echo=FALSE, fig.cap="Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier.", message=FALSE, warning=FALSE, out.height="50%"}
+```{r performance_scatterplot, echo=FALSE, fig.cap="Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier.", message=FALSE, warning=FALSE}
 sleep <- cust_sleep_complete %>%
   ggplot() +
   aes(x=duration, y=flags) +
@@ -145,7 +145,7 @@ sleep <- cust_sleep_complete %>%
   # Adding geom_smooth seems yikes
 ```
 
-```{r performance_histogram, echo=FALSE, fig.cap="Histograms showing the distribution of the number of errors that occur in each sleep session.", message=FALSE, warning=FALSE, out.height="50%", eval=F}
+```{r performance_histogram, echo=FALSE, fig.cap="Histograms showing the distribution of the number of errors that occur in each sleep session.", message=FALSE, warning=FALSE, eval=F}
 # cust_sleep_complete %>%
 #   ggplot() +
 #   aes(x=flags) +
@@ -154,11 +154,13 @@ sleep <- cust_sleep_complete %>%
 #   xlab("Number of flags") +
 #   ggtitle("Distribution of flags per sleep session")
 ```
-```{r, fig.height=10, message=FALSE, warning=FALSE, echo=FALSE}
-# Move to a new page
+
+# ADD CAPTION DONT FORGET
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.height=7}
+# ADD CAPTION DONT FORGET
 library("gridExtra")
 library(grid)
-grid.newpage()
+# grid.newpage()
 # Create layout : nrow = 2, ncol = 2
 pushViewport(viewport(layout = grid.layout(2, 2)))
 # A helper function to define a region on the layout
@@ -169,54 +171,33 @@ define_region <- function(row, col){
 print(age, vp = define_region(1, 1))
 print(inc, vp = define_region(1, 2))
 print(sleep, vp=define_region(2, 1:2))
-
-# library(cowplot)
-# # title <- ggdraw() + 
-# #   draw_label(
-# #     "Graphs",
-# #     fontface = 'bold',
-# #     x = 0.5,
-# #     hjust = 0.5
-# #   ) +
-# #   theme(
-# #     # add margin on the left of the drawing canvas,
-# #     # so title is aligned with left edge of first plot
-# #     plot.margin = margin(0, 0, 0, 7)
-# #   )
-# plot_grid(inc, age, sleep, ncol=2, rel_heights = c(1,2), rel_widths = c(1,1,0.1,0.9))
 ```
 
 \newpage
 # Technical report
-_This part of the report is much more comprehensive than the executive summary. The audience is statistics/data-minded people, but you should NOT include code or unformatted R output here._
-
 
 ## Introduction
-<!-- _Provide a brief introduction to your report and outline what the report will cover. This section is valuable for setting scope and expectations. _ -->
 
-This report provides customer and product analytics on MINGAR's fitness tracking wearable devices with the goal of delivering insights for better product strategizing. To better grasp the customer market of MINGAR's new affordable lines- 'Active' and 'Advance', the UofTears team details demographic characteristics of new customers that these products have attracted thus far- with a particular focus on the targeted lower-income customer segment. Additionally, this report discusses the discrepancy in product performance for customer of diverse races and highlights underlying issues that this presents. The analysis was conducted with respect to ethical concerns and a summary of UofTear's ethical code of conduct is included in the report.
+This report provides customer and product analytics on MINGAR's fitness tracking wearable devices with the goal of delivering insights for better product strategizing. To better grasp the customer market of MINGAR's new affordable lines ('Active' and 'Advance'), the UofTears team details demographic characteristics of new customers that these products have attracted thus far- with a particular focus on the targeted lower-income customer segment. Additionally, this report discusses the discrepancy in product performance for customers of diverse races and highlights underlying issues that this presents. The analysis was conducted with respect to ethical concerns and a summary of UofTear's ethical code of conduct is included in the report.
 
 
 ### Research questions
-<!-- _Use bullet points to to describe the research questions you are going to address. Write in full sentences._ -->
 
--  What are the demographic characteristics associated with customers of the new affordable product lines, "Active" and Advance" vs. customers of previous fitness wearable lines? This question aims to investigate whether the affordable product lines managed to successfully attract new customers of a lower income target market.
+-  What are the demographic characteristics associated with customers of the new affordable product lines ("Active" and Advance") versus customers of previous fitness wearable lines? This question aims to investigate whether the affordable product lines managed to successfully attract new customers of a lower income target market.
 
 - Are there unusual discrepancies in the quality of the data measured by MINGAR fitness wearables for customers of different races (specifically, those with darker skin tones) and differing amounts of sleep?
 
 
 ## Customers of MINGAR's New Afforable Lines
 
-<!-- _For each research question, you will want to briefly describe any data manipulation, show some exploratory plots/summary tables, report on any methods you use (i.e. models you fit) and the conclusions you draw from these_ -->
-
-For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. After that, we select the relevant variables such that our customer's sensitive data are not made public in our report.
+For research question 1, we used the `cancensus` API to retrieve 2016 median incomes for each census subdivision defined by its unique CSDuid - the Canadian census subdivision ID. Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to estimate our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we assigned them the mean of the multiple incomes. Moreover, we added a new variable "age" to our customer data to inform us of the customer's current age. We then merged this customer information data with cust_dev on customer ID. This allowed us to get information on customers and the specific ID of their device. This dataset was then merged with our device dataset on device ID to retrieve information on each customer's device. After that, we selected the relevant variables such that our customer's sensitive data are not made public in our report.
 
 
-As a final data cleaning step, we create a new binary variable in the dataset that takes value 1 if a customer is considered "new" (i.e. is a buyer of our line of "Active" or "Advance" products) and 0 otherwise. This will allow us to build a model that predicts if, given some information about a customer, this customer belongs to the camp of "new" customers or if they belong to the camp of "traditional" customers, which will help us answer the question of who our new customers are and how they differ from those we consider to be our more "traditional" customers.
+As a final data cleaning step, we created a new binary variable in the dataset that takes value 1 if a customer is considered "new" (i.e. is a buyer of our line of "Active" or "Advance" products) and 0 otherwise. This allowed us to build a model that predicts if, given some information about a customer, this customer belongs to the camp of "new" customers or if they belong to the camp of "traditional" customers, which helped us answer the question of who our new customers are and how they differ from those we consider to be our more "traditional" customers.
 
-To start with some exploratory data analysis, we can examine the distribution of median incomes among the customers from whom we have collected data:
+To start with some exploratory data analysis, we examined the distribution of regional median incomes among the customers from whom we have collected data:
 
-```{r, echo = FALSE, fig.cap="Box plots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
+```{r, echo = FALSE, fig.cap="Box plots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
 cust_dev_info %>%
   ggplot(aes(x = income)) +
   geom_boxplot() +
@@ -228,11 +209,11 @@ cust_dev_info %>%
   theme_minimal()
 ```
 
-From the above boxplots, we can see first that for both traditional and new customers, the distribution of median incomes appears to be skewed to the right with a lot of outliers on the right tail, which is expected as income distributions tend to skew to the right in most settings. Another similarity between the two types of customers is that the median of the median income for both groups is around the same as seen by the placement of the middle bars in the boxplots above. However, one major contrast between the two types of customers is that the interquartile range of the median income for new customers appears to be narrower than that of the traditional customers. All of this can be summarized to mean that although the two groups of customers have similar median incomes, the new customers may have slightly less variation in median income as seen by the narrower interquartile range. This therefore means that the variable of median income could possibly play a role in separating customers belonging to the new and traditional camps.
+From the above boxplots, we can see first that for both traditional and new customers, the distribution of median incomes appears to be skewed to the right with a lot of outliers on the right tail, which is expected as income distributions tend to skew to the right in most settings. Another similarity between the two types of customers is that the median of the median income for both groups is around the same as seen by the placement of the middle bars in the box. However, one major contrast between the two types of customers is that the interquartile range of the median income for new customers appears to be narrower than that of the traditional customers. This suggests that although the two groups of customers have similar median incomes, the new customers may have slightly less variation in median income as seen by the narrower interquartile range. Therefore, the variable of median income could possibly play a role in separating customers belonging to the new and traditional camps.
 
-Next, we can also look at the distribution of the ages of these customers:
+Next, we looked at the distribution of the ages of these customers:
 
-```{r, echo = FALSE, fig.cap="Box plots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
+```{r, echo = FALSE, fig.cap="Box plots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
 cust_dev_info %>%
   ggplot(aes(x = age)) +
   geom_boxplot() +
@@ -244,11 +225,11 @@ cust_dev_info %>%
   theme_minimal()
 ```
 
-From the above boxplots, we can see that for both traditional and new customers, the distribution of ages appears to be roughly skewed to the right and the median and spread of the ages for both groups is around the same as seen by the placement of the middle bars in the box. The only major difference between the distributions of the two groups is that ages considered to be outliers for traditional customers are not considered outliers for new customers, which suggests that the frequency of ages for traditional customers gradually levels off as age increases while the frequency of older ages for new customers suddenly drops off at a certain point. All of this can be summarized to mean that most of the features of the distributions of ages for both groups, such as the median and the skew, are the same, and therefore, we must be wary of deciding whether to use age as a predictor for determining whether a customer belongs to the traditional or the new group given this similarity.
+From the above boxplots, we can see that for both traditional and new customers, the distribution of ages appears to be roughly skewed to the right. Additionally, the median and spread of the ages for both groups are around the same as seen by the placement of the middle bars in the boxes. The only major difference between the two distributions is that ages considered to be outliers for traditional customers are not considered outliers for new customers - which suggests that the frequency of ages for traditional customers gradually levels off as age increases while the frequency of older ages for new customers suddenly drops off at a certain point. This indicates that most features of the two distributions, such as median and skew, are the same, and therefore, we must be wary of deciding whether to use age for predicting if a customer belongs to the traditional or the new group.
 
-Finally, we can examine the frequencies of the different pronouns used by these customers:
+Finally, we examined the frequencies of the different pronouns used by these customers:
 
-```{r, echo = FALSE, fig.cap="Bar plots displaying pronouns of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
+```{r, echo = FALSE, fig.cap="Bar plots displaying pronouns of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
 cust_dev_info %>%
   ggplot(aes(x = pronouns)) +
   geom_bar() +
@@ -260,7 +241,7 @@ cust_dev_info %>%
   theme_minimal()
 ```
 
-From the above barplots, we can see that for both traditional and new customers, the pronouns of "she/her" are used by the most customers, followed by "he/him" and "they/them". We can also see that the bars in the barplot corresponding to the new customers are taller than those in the other barplot, but that is to be expected as we know that there are 8476 customers belonging to the traditional camp and 10569 belonging to the new camp. Due to this, we must also be wary of deciding whether to use pronouns as a predictor for determining whether a customer belongs to the traditional or the new group, given how similar the frequencies of pronouns are across both groups.
+From the above bar plots, we can see that for both traditional and new customers, the pronouns of "she/her" are most commonly used, followed by "he/him" and "they/them". We can also see that the bars in the plot corresponding to the new customers are taller than those in the other plot, but that is expected as we know that there are 8476 customers in the traditional camp and 10569 in the new camp. Due to this, we must also be wary of deciding whether to use pronouns as a predictor for determining whether a customer belongs to the traditional or the new group, given how similar the frequencies of pronouns are across both groups.
 
 Before building preliminary models, recall that as we are trying to gain insight as to what who tends to buy our "Active" and "Advance" line products and how they differ from our traditional customers who buy other lines, we know that the colour of the emoji that customers use has no direct or quantifiable (but still some) impact on whether they belong to the new or traditional camp, which is why we will include this as a random effect.
 
