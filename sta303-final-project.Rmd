@@ -117,6 +117,118 @@ _For each research question, you will want to briefly describe any data manipula
 
 For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. Finally, we select the relevant variables such that our customer's sensitive data are not made public in our report.
 
+
+As a final data cleaning step, we create a new binary variable in the dataset that takes value 1 if a customer is considered "new" (i.e. is a buyer of our line of "Active" or "Advance" products) and 0 otherwise. This will allow us to build a model that predicts if, given some information about a customer, this customer belongs to the camp of "new" customers or if they belong to the camp of "traditional" customers, which will help us answer the question of who our new customers are and how they differ from those we consider to be our more "traditional" customers.
+
+```{r, echo = FALSE}
+cust_dev_info <- readRDS("data/cust_dev_info.Rds")
+cust_dev_info <- cust_dev_info %>%
+  mutate(is_new = ifelse(cust_dev_info$line == "Advance" | cust_dev_info$line == "Active", 1, 0))
+```
+
+To start with some exploratory data analysis, we can examine the distribution of median incomes among the customers from whom we have collected data:
+
+```{r, echo = FALSE}
+cust_dev_info %>%
+  ggplot(aes(x = income)) +
+  geom_boxplot() +
+  facet_wrap(~is_new, 
+             nrow = 2,
+             labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
+  ggtitle("The Distribution of Median Income of the Sampled Customers") +
+  xlab("Median Income") +
+  theme_minimal()
+```
+
+From the above boxplots, we can see first that for both traditional and new customers, the distribution of median incomes appears to be skewed to the right with a lot of outliers on the right tail, which is expected as income distributions tend to skew to the right in most settings. Another similarity between the two types of customers is that the median of the median income for both groups is around the same as seen by the placement of the middle bars in the boxplots above. However, one major contrast between the two types of customers is that the interquartile range of the median income for new customers appears to be narrower than that of the traditional customers. All of this can be summarized to mean that although the two groups of customers have similar median incomes, the new customers may have slightly less variation in median income as seen by the narrower interquartile range. This therefore means that the variable of median income could possibly play a role in separating customers belonging to the new and traditional camps.
+
+Next, we can also look at the distribution of the ages of these customers:
+
+```{r, echo = FALSE}
+cust_dev_info %>%
+  ggplot(aes(x = age)) +
+  geom_boxplot() +
+  facet_wrap(~is_new, 
+             nrow = 2,
+             labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
+  ggtitle("The Distribution of Age of the Sampled Customers") +
+  xlab("Age") +
+  theme_minimal()
+```
+
+From the above boxplots, we can see that for both traditional and new customers, the distribution of ages appears to be roughly skewed to the right and the median and spread of the ages for both groups is around the same as seen by the placement of the middle bars in the box. The only major difference between the distributions of the two groups is that ages considered to be outliers for traditional customers are not considered outliers for new customers, which suggests that the frequency of ages for traditional customers gradually levels off as age increases while the frequency of older ages for new customers suddenly drops off at a certain point, which is something we can't see on a boxplot. All of this can be summarized to mean that most of the features of the distributions of ages for both groups, such as the median and the skew, are the same, and therefore, we must be wary of deciding whether to use age as a predictor for determining whether a customer belongs to the traditional or the new group given this similarity.
+
+Finally, we can examine the frequencies of the different pronouns used by these customers:
+
+```{r, echo = FALSE}
+cust_dev_info %>%
+  ggplot(aes(x = pronouns)) +
+  geom_bar() +
+  facet_wrap(~is_new,
+             nrow = 1,
+             labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
+  ggtitle("The Frequencies of Different Pronouns Among the Sampled Customers") +
+  xlab("Pronouns") +
+  theme_minimal()
+```
+
+From the above barplots, we can see that for both traditional and new customers, the pronouns of "she/her" are used by the most customers, followed by "he/him" and "they/them". We can also see that the bars in the barplot corresponding to the new customers are taller than those in the other barplot, but that is to be expected as we know that there are 8476 customers belonging to the traditional camp and 10569 belonging to the new camp. Due to this, we must also be wary of deciding whether to use pronouns as a predictor for determining whether a customer belongs to the traditional or the new group, given how similar the frequencies of pronouns are across both groups.
+
+Before building preliminary models, recall that as we are trying to gain insight as to what who tends to buy our "Active" and "Advance" line products and how they differ from our traditional customers who buy other lines, we know that the colour of the emoji that customers use has no direct or quantifiable (but still some) impact on whether they belong to the new or traditional camp, which is why we will include this as a random effect.
+
+Now, we have the tools to build our preliminary models. Since the response is binary and we have a random effect, we must use a generalized linear mixed model (GLMM) for this data. We start by fitting a GLMM with all of the potential predictors that we have so far, including pronouns, median income, and age. Then, we create an auxiliary model that doesn't include pronouns as a predictor and another that doesn't include age as a predictor, since in the previous exploratory data analysis we could not determine whether these would be good predictors just based on eyeballing the boxplots. 
+
+```{r, echo = FALSE, eval = FALSE}
+full_mod <- lme4::glmer(is_new ~ pronouns + scales::rescale(age) + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
+no_age <- lme4::glmer(is_new ~ pronouns + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
+no_pronouns <- lme4::glmer(is_new ~ scales::rescale(income) + scales::rescale(age) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
+
+lmtest::lrtest(no_age, full_mod)
+lmtest::lrtest(no_pronouns, full_mod)
+```
+
+By running likelihood ratio tests between the model containing all the predictors so far and the two auxiliary models, we conclude that while a model without age as a predictor will NOT explain the data as well as the model containing all the predictors, a model without pronouns as a predictor WILL explain the data as well as the model containing all the predictors. Thus, we conclude that pronouns can be discarded as a predictor in our final model.
+
+```{r, echo = FALSE, eval = FALSE}
+finalmod <- lme4::glmer(is_new ~ scales::rescale(age) + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
+```
+
+After building this final model, consider the following results:
+
+```{r, echo = FALSE, cache = TRUE, eval = FALSE}
+ests <- format(round(exp(summary(finalmod)$coeff)[,1], 2), nsmall = 2)
+confint <- confint(finalmod)
+cis <- format(round(exp(confint),2)[-1,], nsmall = 2)
+cis_pretty <- str_c("(", trimws(cis[,1]), ", ", cis[,2], ")")
+my_pretty_table <- cbind(ests, cis_pretty)
+rownames_for_table <- c("Baseline odds", "Rescaled Age", "Rescaled Median Income")
+colnames_for_table <- c("Estimate", "95% CI")
+rownames(my_pretty_table) <- rownames_for_table
+colnames(my_pretty_table) <- colnames_for_table
+```
+
+```{r, echo = FALSE}
+my_pretty_table %>%
+  kable(caption = "Estimates of Odds Ratios and Corresponding 95% Confidence Intervals") %>%
+  kable_styling()
+```
+
+First, note that we were forced to rescale age and median income in order to allow R to properly build the model. These variables were rescaled with the following formulae: 
+
+$$\text{age}_{\text{rescaled}} = \frac{\text{age}_\text{raw} - \min(\text{age})}{\max(\text{age}) - \min(\text{age})}$$
+
+$$\text{income}_{\text{rescaled}} = \frac{\text{income}_\text{raw} - \min(\text{income})}{\max(\text{income}) - \min(\text{income})}$$
+
+where $\text{age}_\text{raw}$ and $\text{income}_\text{raw}$ correspond to the original, "raw" age or median income value that is to be rescaled, $\min(\text{age}), \min(\text{income}), \max(\text{age}),$ and $\max(\text{income})$ correspond to the minimum and maximum age and median income values among all customers in the dataset, and $\text{age}_{\text{rescaled}}$ and $\text{income}_{\text{rescaled}}$ correspond to the resulting rescaled age and median income value.
+
+In the table, we can first see that the estimate of the baseline odds ratio is 1.93, which means that when both rescaled age and rescaled median income are 0, the odds of a customer belonging to the new camp is 1.93:1. Since a rescaled age of 0 and a rescaled median income of 0 correspond to the age of `r toString(min(cust_dev_info$age))` and the median income of `r toString(min(cust_dev_info$income))` respectively, we can say that the odds ratio of a customer belonging to the new camp is 1.93:1 when that customer is `r toString(min(cust_dev_info$age))` years old and lives in a region where the median income is `r toString(min(cust_dev_info$income))`. 
+
+In the next row in the table, we have that the estimate of the odds ratio corresponding to the rescaled age is 1.46. This means that for every unit increase in rescaled age, the odds of a customer belonging to the new camp increase by about 46%. By definition, we have that a unit increase in rescaled age corresponds to a $\frac{1}{\max(\text{age}) - \min(\text{age})}$ increase in raw, unscaled age, so we conclude that for every approximately `r toString(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)))` increase in a customer's age (this is approximately `r toString(365 / (max(cust_dev_info$age) - min(cust_dev_info$age)))` days), the odds of that customer belonging to the new camp increases by about 46%.
+
+In the last row of the table, we have that the estimate of the odds ratio corresponding to the rescaled median income is 0.04, which means that for every unit increase in rescaled median income, the odds of a customer belonging to the new camp decreases by about 96%. Using the same logic as previously, we have that a unit increase in rescaled median income corresponds to a $\frac{1}{\max(\text{income}) - \min(\text{income})}$ increase in raw, unscaled median income, so we conclude that for every approximately `r toString(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)))` increase in a customer's median income, the odds of that customer belonging to the new camp decreases by about 96%.
+
+These estimates of the odds ratios corresponding to each of the variables in the model tell us that the youngest and lowest income customers have almost 2 to 1 odds of buying our newer and more affordable Active and Advance line products, and this trend is made even more clear by the fact that by even the smallest of increases in median income, the odds of a customer purchasing a product from one of these lines goes down by a staggering 96%. This allows us to conclude that among our lower income customers, our Active and Advance line products have indeed been able to attract considerable attention, and that our new customers mainly reside in regions of lower median income.
+
 ## Informative title for section addressing a research question 2
 
 To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub [(which can be found here)](https://fitnesstrackerinfohub.netlify.app/), which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji_modifier unicodes were also converted to more interprettable labels.
