@@ -487,4 +487,4 @@ Median household income data was attained via the Canadian census API. The UofTe
 Postal code conversion data was retrieved from Census Canada via the University of Toronto portal. The UofTears team comprises of University of Toronto students and hence, had the proper credentials to access the data. In downloading the dataset, the UofTears team has agreed to the license agreement. The source for this information has been acknowledged in this report.
 
 
-__Final advice: KNIT EARLY AND OFTEN!__
+<!-- __Final advice: KNIT EARLY AND OFTEN!__ -->
