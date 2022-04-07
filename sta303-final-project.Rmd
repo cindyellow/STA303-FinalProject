@@ -102,6 +102,8 @@ MINGAR is a company that produces fitness tracking wearable devices. As the wear
 ## Visuals
 
 ```{r, echo = FALSE, fig.cap="Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+# Draw boxplots describing the distribution of median incomes for customers
+# in both the new and traditional groups
 inc <- cust_dev_info %>%
   ggplot(aes(x = income)) +
   geom_boxplot() +
@@ -116,6 +118,8 @@ inc <- cust_dev_info %>%
 ```
 
 ```{r, echo = FALSE, fig.cap="Boxplots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+# Draw boxplots describing the distribution of ages for customers
+# in both the new and traditional groups
 age <- cust_dev_info %>%
   ggplot(aes(x = age)) +
   geom_boxplot() +
@@ -198,6 +202,8 @@ As a final data cleaning step, we created a new binary variable in the dataset t
 To start with some exploratory data analysis, we examined the distribution of regional median incomes among the customers from whom we have collected data:
 
 ```{r, echo = FALSE, fig.cap="Box plots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+# Draw boxplots describing the distribution of median incomes for customers
+# in both the new and traditional groups
 cust_dev_info %>%
   ggplot(aes(x = income)) +
   geom_boxplot() +
@@ -214,6 +220,8 @@ From the above boxplots, we can see first that for both traditional and new cust
 Next, we looked at the distribution of the ages of these customers:
 
 ```{r, echo = FALSE, fig.cap="Box plots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+# Draw boxplots describing the distribution of ages for customers
+# in both the new and traditional groups
 cust_dev_info %>%
   ggplot(aes(x = age)) +
   geom_boxplot() +
@@ -230,6 +238,8 @@ From the above boxplots, we can see that for both traditional and new customers,
 Finally, we examined the frequencies of the different pronouns used by these customers:
 
 ```{r, echo = FALSE, fig.cap="Bar plots displaying pronouns of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers')."}
+# Draw bar plots describing the frequencies of pronouns used by customers
+# in both the new and traditional groups
 cust_dev_info %>%
   ggplot(aes(x = pronouns)) +
   geom_bar() +
@@ -248,10 +258,12 @@ Before building preliminary models, recall that as we are trying to gain insight
 Now, we have the tools to build our preliminary models. Since the response is binary and we have a random effect, we must use a generalized linear mixed model (GLMM) for this data. We start by fitting a GLMM with all of the potential predictors that we have so far, including pronouns, median income, and age. Then, we create an auxiliary model that doesn't include pronouns as a predictor and another that doesn't include age as a predictor, since in the previous exploratory data analysis we could not determine whether these would be good predictors just based on eyeballing the boxplots. 
 
 ```{r, echo = FALSE, include = FALSE}
+# Build models for likelihood ratio tests
 full_mod <- lme4::glmer(is_new ~ pronouns + scales::rescale(age) + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
 no_age <- lme4::glmer(is_new ~ pronouns + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
 no_pronouns <- lme4::glmer(is_new ~ scales::rescale(income) + scales::rescale(age) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
 
+# Conduct likelihood ratio tests
 lmtest::lrtest(no_age, full_mod)
 lmtest::lrtest(no_pronouns, full_mod)
 ```
@@ -259,12 +271,13 @@ lmtest::lrtest(no_pronouns, full_mod)
 By running likelihood ratio tests between the model containing all the predictors so far and the two auxiliary models, we conclude that while a model without age as a predictor will NOT explain the data as well as the model containing all the predictors, a model without pronouns as a predictor WILL explain the data as well as the model containing all the predictors. Thus, we conclude that pronouns can be discarded as a predictor in our final model.
 
 ```{r, echo = FALSE, include = FALSE}
+# Build the final model
 finalmod <- lme4::glmer(is_new ~ scales::rescale(age) + scales::rescale(income) + (1 | emoji_modifier), data = cust_dev_info, family = 'binomial')
 ```
 
-After building this final model, consider the following results:
 
 ```{r, echo = FALSE, cache = TRUE, include = FALSE}
+# Extract estimates and confidence intervals from final model
 ests <- format(round(exp(summary(finalmod)$coeff)[,1], 2), nsmall = 2)
 confint <- confint(finalmod)
 cis <- format(round(exp(confint),2)[-1,], nsmall = 2)
@@ -273,7 +286,8 @@ cis_pretty <- str_c("(", trimws(cis[,1]), ", ", cis[,2], ")")
 
 
 ```{r, echo = FALSE}
-
+# Build and output a table describing the estimates and 
+# confidence intervals from the final model
 my_pretty_table <- cbind(ests, cis_pretty)
 rownames_for_table <- c("Baseline Odds", "Rescaled Age", "Rescaled Median Income")
 colnames_for_table <- c("Estimate", "95% CI")
@@ -285,7 +299,7 @@ my_pretty_table %>%
 
 ```
 
-First, note that we were forced to rescale age and median income in order to allow R to properly build the model. These variables were rescaled with the following formulae: 
+To interpret the final model whose estimates and corresponding confidence intervals are in Table 1, first note that we were forced to rescale age and median income in order to allow R to properly build the model. These variables were rescaled with the following formulae: 
 
 $$\text{age}_{\text{rescaled}} = \frac{\text{age}_\text{raw} - \min(\text{age})}{\max(\text{age}) - \min(\text{age})}$$
 
