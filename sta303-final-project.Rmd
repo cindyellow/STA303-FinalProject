@@ -237,7 +237,7 @@ lmtest::lrtest(no_age, full_mod)
 lmtest::lrtest(no_pronouns, full_mod)
 ```
 
-By running likelihood ratio tests between the model containing all the predictors so far and the two auxiliary models, we conclude that while a model without age as a predictor will NOT explain the data as well as the model containing all the predictors, a model without pronouns as a predictor WILL explain the data as well as the model containing all the predictors. Thus, we conclude that pronouns can be discarded as a predictor in our final model.
+By running likelihood ratio tests between the model containing all the predictors so far and the two auxiliary models, we conclude that while a model without age as a predictor will NOT explain the data as well as the model containing all the predictors (due to the LRT p-value of 6.426e-09), a model without pronouns as a predictor WILL explain the data as well as the model containing all the predictors (due to the LRT p-value of 0.1258). Thus, we conclude that pronouns can be discarded as a predictor in our final model. 
 
 ```{r, echo = FALSE, include = FALSE}
 # Build the final model
@@ -405,9 +405,11 @@ These results suggest that there is a indeed an association between the choice o
 
 The UofTears team prides ourselves on interpretability of our models. Whenever possible, the team makes conscious effort to work with models that are human-understandable. In fact,  all finalized models in this report are easily interpretable. Interpretability is important as understanding the decisions an algorithm takes can help to identify underlying prejudice in the algorithm.
 
-With that said, the UofTears team faced a few limitations during this analysis. In the first research question, the team did not have direct access to customer incomes data and was required to make assumptions on a customer's income based on their postal code. While this generalization allows for reasonable analysis, for a more accurate report on market demographics, the team would need direct customer information. With that said, the UofTears team acknowledges that income is sensitive data and collection of such information may cause user privacy concerns. Moreover, the median income data used in this analysis was attained in 2016. Hence, this number may not be entirely reflective of the customer's current income.
+With that said, the UofTears team faced a few limitations during this analysis. In the first research question, the team did not have direct access to customer incomes data and was required to make assumptions on a customer's income based on their postal code. While this generalization allows for reasonable analysis, for a more accurate report on market demographics, the team would need direct customer information. With that said, the UofTears team acknowledges that income is sensitive data and collection of such information may cause user privacy concerns. Moreover, the median income data used in this analysis was attained in 2016. Hence, this number may not be entirely reflective of the customer's current income. 
 
 With regards to the second research question, one limiting factor is the presence of missing values for user's emoji modifier, which signifies that they used the default skin tone. The UofTears team is thus unable to determine the race/ethnicity of those users, which adds uncertainty and limits the conclusions we were able to make about the relationship between device flags and user race. Similarly, a certain choice of emoji skin tone does not necessarily correspond to the user's actual racial identity.
+
+A suggestion to remedy these limitations is for MINGAR to send out an optional customer survey where customers can volunteer to provide data such as race about themselves. Note that MINGAR must disclose the usage of this data as well as any other possible ethical concerns. Customers must also have the ability to opt out of the survey if desired.
 
 \newpage
 # Consultant information
