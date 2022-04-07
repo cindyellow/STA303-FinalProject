@@ -23,6 +23,8 @@ library(rvest)
 library(polite)
 library(lmtest)
 library(kableExtra)
+library("gridExtra")
+library(grid)
 
 # this should suppress all code and messages
 knitr::opts_chunk$set(include=TRUE)
@@ -157,8 +159,6 @@ sleep
 
 # ADD CAPTION DONT FORGET
 ```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.height=7}
-library("gridExtra")
-library(grid)
 # Create layout : nrow = 2, ncol = 2
 pushViewport(viewport(layout = grid.layout(2, 2)))
 # A helper function to define a region on the layout
