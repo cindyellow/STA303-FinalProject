@@ -88,15 +88,11 @@ MINGAR is a company that produces fitness tracking wearable devices. As the wear
 
 -  The maximum number of flags per sleep session is higher for customers that use darker skin tone emoji modifiers compared to those that use lighter or default skin tone. 
 
--  Compared to customers that use the light skin tone modifier, those that use the dark skin tone have on average 10.6 times 1061.65% more increase in the number of flags per one more minute of sleep. Similarly, those that use the medium-dark skin tone modifiers have on average 6.3 times 634.27% more increase than the light skin tone emoji users.
-
 -  The average increase in the number of flags per one more minute of sleep across users of default, light, medium-light, and medium skin tone is 24.55% of the average increase across medium-dark and dark skin tone users.
 
 ## Limitations
 
 -  The UofTears team did not have direct access to customer information such as income. Instead, customer income was estimated using the median income for their area via postal code.
-
--  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly reflect current customer income.
 
 -  Emoji skin tone is not an absolute indicator of a user's race or ethnicity, which adds uncertainty to conclusions on the relationship between device performance and skin tone.
 
@@ -114,7 +110,7 @@ inc <- cust_dev_info %>%
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
   ggtitle("The Distribution of Median Income \nof the Sampled Customers") +
   xlab("Median Income (in Canadian dollars)") +
-    labs(caption = "Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').") +
+    labs(caption = "Boxplots displaying incomes of customers who purchased MINGAR's new affordable line \n vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').") +
   theme_minimal() +
   coord_fixed(ratio=25000) + 
   theme(plot.title = element_text(size = 12, hjust = 0.5),
@@ -311,7 +307,7 @@ These estimates of the odds ratios corresponding to each of the variables in the
 
 ## Device Performance for Customers of Different Races
 
-To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub [(which can be found here)](https://fitnesstrackerinfohub.netlify.app/), which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji_modifier unicodes were also converted to more interpretable labels.
+To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub [(which can be found here)](https://fitnesstrackerinfohub.netlify.app/), which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji-modifier unicodes were also converted to more interpretable labels.
 
 With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that was raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable--using emoji-modifiers to predict each customer's skin tone. The following figure depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic, so we decided to fit a linear mixed model. The reason why we avoided generalized additive models is because we seeked to maximize interpretability, as we needed to explain our model to our employers.
 
