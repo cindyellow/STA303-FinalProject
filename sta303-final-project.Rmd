@@ -1,6 +1,6 @@
 ---
-title: "Report title"
-subtitle: "Subtitle that indicates findings"
+title: "MINGAR Fitness Wearables"
+subtitle: "Exploring the customer base and device performance of MINGAR's fitness wearables."
 author: "Report prepared for MINGAR by UofTears"
 date: 2022-04-07
 lang: "en"
@@ -10,13 +10,13 @@ output:
     toc: true
     toc_depth: 2
 titlepage: true
-titlepage-color: "002554"
+titlepage-color: "9cb8c3"
 titlepage-text-color: "FFFFFF"
 titlepage-rule-color: "FFFFFF"
 titlepage-rule-height: 2
 ---
 
-```{r load_packages, message = FALSE, echo=FALSE}
+```{r load_packages, message = FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(lme4)
 library(rvest)
@@ -29,7 +29,7 @@ knitr::opts_chunk$set(include=TRUE)
 ```
 
 ```{r load_data, echo=FALSE, warning=FALSE, message=FALSE}
-# read in the data (this will only work once you've set up the data!)
+# read in the data 
 cust_sleep_complete <- readRDS("data/cust_sleep_complete.Rds")
 
 cust_dev_info <- readRDS("data/cust_dev_info.Rds")
@@ -44,69 +44,81 @@ device_performance_model_mixed <- lmer(flags ~ duration*emoji_modifier+(1|age),
                                        data=cust_sleep_complete)
 ```
 
-# General comments (you can delete this section)
+<!-- # General comments (you can delete this section) -->
 
-_Before making any changes, knit this Rmd to PDF and change the name of the PDf to something like 'original-instructions.pdf', or whatever you like (it is just for your reference).. Then you can delete this section and if you want to check what it said, just open the other PDF. You don't HAVE to use this particular template, but you DO need to write you report in RMarkdown and include a cover page._
+<!-- _Before making any changes, knit this Rmd to PDF and change the name of the PDf to something like 'original-instructions.pdf', or whatever you like (it is just for your reference).. Then you can delete this section and if you want to check what it said, just open the other PDF. You don't HAVE to use this particular template, but you DO need to write you report in RMarkdown and include a cover page._ -->
 
-_The cover page must be a single stand alone page and have:_
+<!-- _The cover page must be a single stand alone page and have:_ -->
 
-*	_A title and subtitle (that indicate your findings)_
-* _"Report prepared for MINGAR by" your company name_
-*	_Date (assessment submission date is fine)_
+<!-- *	_A title and subtitle (that indicate your findings)_ -->
+<!-- * _"Report prepared for MINGAR by" your company name_ -->
+<!-- *	_Date (assessment submission date is fine)_ -->
 
-_You can change the colour of this cover to any colour you would like by replacing 6C3082 in the YAML above (`titlepage-color:`) to another hex code. You could use this tool to help you:_ https://htmlcolorcodes.com/color-picker/
+<!-- _You can change the colour of this cover to any colour you would like by replacing 6C3082 in the YAML above (`titlepage-color:`) to another hex code. You could use this tool to help you:_ https://htmlcolorcodes.com/color-picker/ -->
 
-_Note: There should NOT be a table of contents on the cover page. It should look like a cover._
+<!-- _Note: There should NOT be a table of contents on the cover page. It should look like a cover._ -->
 
 \newpage
 # Executive summary
 
-_Guidelines for the executive summary:_
+<!-- _Guidelines for the executive summary:_ -->
 
-* _No more than two pages_
-* _Language is appropriate for a non-technical audience_
-* _Bullet points are used where appropriate_
-*	_A small number of key visualizations and/or tables are included_
-*	_All research questions are addressed_
+<!-- * _No more than two pages_ -->
+<!-- * _Language is appropriate for a non-technical audience_ -->
+<!-- * _Bullet points are used where appropriate_ -->
+<!-- *	_A small number of key visualizations and/or tables are included_ -->
+<!-- *	_All research questions are addressed_ -->
 
-```{r, echo = FALSE}
+<!-- _The [module 4 writing prompt](https://sta303-bolton.github.io/sta303-w22-courseguide/knowledge-basket-writing-and-peer-feedback.html#module-4-writing-task) provides some tips and information about writing executive summaries._ -->
+
+## Background & Aim
+
+Filler.
+
+## Key Findings
+
+- The new affordable product lines, "Active" and "Advance", have attracted customers that are located in lower income regions and are slightly older in age in comparison to constomers of MINGAR's other lines.
+
+- For every `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` Canadian dollars increase in a customer's median region income, the odds of that customer purchasing a device from MINGAR's affordable line over a device from MINGAR's other lines decreases by roughly 96%.
+
+- For every `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in customer age, the odds of that customer purchasing a device from MINGAR's affordable line ('Active' or 'Advance') over a device from MINGAR's other lines increases by about 46%. 
+
+## Limitations
+
+-  The UofTears team did not have direct access to customer information such as income. Instead, customer income was estimated using the median income for their area via postal code.
+
+-  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly align with customer income at time of product purchase.
+
+
+## Visuals
+
+```{r, echo = FALSE, fig.cap="Boxplots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers').", out.height="50%"}
 cust_dev_info %>%
   ggplot(aes(x = income)) +
-  geom_histogram() +
+  geom_boxplot() +
   facet_wrap(~is_new, 
              nrow = 2,
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
   ggtitle("The Distribution of Median Income of the Sampled Customers") +
   xlab("Median Income") +
-  theme_minimal()
+  theme_minimal() +
+  coord_fixed(ratio=25000)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.cap="Boxplots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
 cust_dev_info %>%
   ggplot(aes(x = age)) +
-  geom_histogram() +
+  geom_boxplot() +
   facet_wrap(~is_new, 
              nrow = 2,
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
   ggtitle("The Distribution of Age of the Sampled Customers") +
   xlab("Age") +
-  theme_minimal()
+  theme_minimal() +
+  coord_fixed(ratio=10)
 ```
 
-```{r, echo = FALSE}
-cust_dev_info %>%
-  ggplot(aes(x = pronouns)) +
-  geom_bar() +
-  facet_wrap(~is_new,
-             nrow = 1,
-             labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
-  ggtitle("The Frequencies of Different Pronouns Among the Sampled Customers") +
-  xlab("Pronouns") +
-  theme_minimal()
-```
-
-
-```{r performance_scatterplot, echo=FALSE, fig.cap="Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier."}
+```{r performance_scatterplot, echo=FALSE, fig.cap="Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier.", message=FALSE, warning=FALSE, out.height="50%"}
 cust_sleep_complete %>%
   ggplot() +
   aes(x=duration, y=flags) +
@@ -120,24 +132,16 @@ cust_sleep_complete %>%
   # Adding geom_smooth seems yikes
 ```
 
-```{r performance_histogram, echo=FALSE, fig.cap="Histograms showing the distribution of the number of errors that occur in each sleep session."}
-cust_sleep_complete %>%
-  ggplot() +
-  aes(x=flags) +
-  facet_wrap(~emoji_modifier) +
-  geom_histogram() +
-  xlab("Number of flags") +
-  ggtitle("Distribution of flags per sleep session")
+```{r performance_histogram, echo=FALSE, fig.cap="Histograms showing the distribution of the number of errors that occur in each sleep session.", message=FALSE, warning=FALSE, out.height="50%", eval=F}
+# cust_sleep_complete %>%
+#   ggplot() +
+#   aes(x=flags) +
+#   facet_wrap(~emoji_modifier) +
+#   geom_histogram() +
+#   xlab("Number of flags") +
+#   ggtitle("Distribution of flags per sleep session")
 ```
 
-
-## Limitations
-
--  The UofTears team did not have direct access to customer information such as income. Instead, customer income was extrapolated using the median income for their area via postal code.
-
--  Median income data used to estimate customer income came from the 2016 Canadian census and hence, does not perfectly align with customer income at time of product purchase.
-
-<!-- _The [module 4 writing prompt](https://sta303-bolton.github.io/sta303-w22-courseguide/knowledge-basket-writing-and-peer-feedback.html#module-4-writing-task) provides some tips and information about writing executive summaries._ -->
 
 
 \newpage
@@ -154,23 +158,23 @@ This report provides customer and product analytics on MINGAR's fitness tracking
 ### Research questions
 <!-- _Use bullet points to to describe the research questions you are going to address. Write in full sentences._ -->
 
--  What are the demographic characteristics associated with customers of the new affordable product lines, "Active" and Advance" vs. customers of previous fitness wearable lines? This question aims to investigate whether the affordable product lines managed to successfully attract new customers of the lower-income target market.
+-  What are the demographic characteristics associated with customers of the new affordable product lines, "Active" and Advance" vs. customers of previous fitness wearable lines? This question aims to investigate whether the affordable product lines managed to successfully attract new customers of a lower income target market.
 
 - Are there unusual discrepancies in the quality of the data measured by MINGAR fitness wearables for customers of different races (specifically, those with darker skin tones) and differing amounts of sleep?
 
 
-## Informative title for section addressing research question 1
+## Customers of MINGAR's New Afforable Lines
 
-_For each research question, you will want to briefly describe any data manipulation, show some exploratory plots/summary tables, report on any methods you use (i.e. models you fit) and the conclusions you draw from these_
+<!-- _For each research question, you will want to briefly describe any data manipulation, show some exploratory plots/summary tables, report on any methods you use (i.e. models you fit) and the conclusions you draw from these_ -->
 
-For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. Finally, we select the relevant variables such that our customer's sensitive data are not made public in our report.
+For research question 1, we used the cancensus API to retrieve 2016 median incomes for each census subdivision (defined by its unique CSDuid). Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to evaluate an estimate of our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we will assigned them the mean of the multiple incomes. Moreover, we add a new variable "age" to our customer data to inform us of the customer's current age. We now merge this customer information data with cust_dev on cust_id. This allows us to get information on customers and the specific ID of their device. Now, we merge this dataset with our device dataset on dev_id to retrieve information on each customer's device. After that, we select the relevant variables such that our customer's sensitive data are not made public in our report.
 
 
 As a final data cleaning step, we create a new binary variable in the dataset that takes value 1 if a customer is considered "new" (i.e. is a buyer of our line of "Active" or "Advance" products) and 0 otherwise. This will allow us to build a model that predicts if, given some information about a customer, this customer belongs to the camp of "new" customers or if they belong to the camp of "traditional" customers, which will help us answer the question of who our new customers are and how they differ from those we consider to be our more "traditional" customers.
 
 To start with some exploratory data analysis, we can examine the distribution of median incomes among the customers from whom we have collected data:
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.cap="Box plots displaying incomes of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
 cust_dev_info %>%
   ggplot(aes(x = income)) +
   geom_boxplot() +
@@ -186,7 +190,7 @@ From the above boxplots, we can see first that for both traditional and new cust
 
 Next, we can also look at the distribution of the ages of these customers:
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.cap="Box plots displaying ages of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
 cust_dev_info %>%
   ggplot(aes(x = age)) +
   geom_boxplot() +
@@ -202,7 +206,7 @@ From the above boxplots, we can see that for both traditional and new customers,
 
 Finally, we can examine the frequencies of the different pronouns used by these customers:
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.cap="Bar plots displaying pronouns of customers who purchased MINGAR's new affordable line (i.e. 'New Customers') vs. customers who purcahsed MINGAR's other lines (i.e. 'Traditional Customers')."}
 cust_dev_info %>%
   ggplot(aes(x = pronouns)) +
   geom_bar() +
@@ -248,7 +252,7 @@ cis_pretty <- str_c("(", trimws(cis[,1]), ", ", cis[,2], ")")
 ```{r, echo = FALSE}
 
 my_pretty_table <- cbind(ests, cis_pretty)
-rownames_for_table <- c("Baseline odds", "Rescaled Age", "Rescaled Median Income")
+rownames_for_table <- c("Baseline Odds", "Rescaled Age", "Rescaled Median Income")
 colnames_for_table <- c("Estimate", "95% CI")
 rownames(my_pretty_table) <- rownames_for_table
 colnames(my_pretty_table) <- colnames_for_table
@@ -266,15 +270,15 @@ $$\text{income}_{\text{rescaled}} = \frac{\text{income}_\text{raw} - \min(\text{
 
 where $\text{age}_\text{raw}$ and $\text{income}_\text{raw}$ correspond to the original, "raw" age or median income value that is to be rescaled, $\min(\text{age}), \min(\text{income}), \max(\text{age}),$ and $\max(\text{income})$ correspond to the minimum and maximum age and median income values among all customers in the dataset, and $\text{age}_{\text{rescaled}}$ and $\text{income}_{\text{rescaled}}$ correspond to the resulting rescaled age and median income value.
 
-In the table, we can first see that the estimate of the baseline odds ratio is 1.93, which means that when both rescaled age and rescaled median income are 0, the odds of a customer belonging to the new camp is 1.93:1. Since a rescaled age of 0 and a rescaled median income of 0 correspond to the age of `r toString(min(cust_dev_info$age))` and the median income of `r toString(min(cust_dev_info$income))` respectively, we can say that the odds ratio of a customer belonging to the new camp is 1.93:1 when that customer is `r toString(min(cust_dev_info$age))` years old and lives in a region where the median income is `r toString(min(cust_dev_info$income))`. 
+In the table, we can first see that the estimate of the baseline odds ratio is 1.93, which means that when both rescaled age and rescaled median income are 0, the odds of a customer belonging to the new camp is 1.93:1. Since a rescaled age of 0 and a rescaled median income of 0 correspond to the age of `r toString(signif(min(cust_dev_info$age), 2))` and the median income of `r toString(min(cust_dev_info$income))` respectively, we can say that the odds ratio of a customer belonging to the new camp is 1.93:1 when that customer is `r toString(signif(min(cust_dev_info$age), 2))` years old and lives in a region where the median income is `r toString(min(cust_dev_info$income))`. 
 
-In the next row in the table, we have that the estimate of the odds ratio corresponding to the rescaled age is 1.46. This means that for every unit increase in rescaled age, the odds of a customer belonging to the new camp increase by about 46%. By definition, we have that a unit increase in rescaled age corresponds to a $\frac{1}{\max(\text{age}) - \min(\text{age})}$ increase in raw, unscaled age, so we conclude that for every approximately `r toString(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)))` increase in a customer's age (this is approximately `r toString(365 / (max(cust_dev_info$age) - min(cust_dev_info$age)))` days), the odds of that customer belonging to the new camp increases by about 46%.
+In the next row in the table, we have that the estimate of the odds ratio corresponding to the rescaled age is 1.46. This means that for every unit increase in rescaled age, the odds of a customer belonging to the new camp increase by about 46%. By definition, we have that a unit increase in rescaled age corresponds to a $\frac{1}{\max(\text{age}) - \min(\text{age})}$ increase in raw, unscaled age, so we conclude that for every approximately `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` increase in a customer's age (this is approximately `r toString(signif(365 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` days), the odds of that customer belonging to the new camp increases by about 46%.
 
-In the last row of the table, we have that the estimate of the odds ratio corresponding to the rescaled median income is 0.04, which means that for every unit increase in rescaled median income, the odds of a customer belonging to the new camp decreases by about 96%. Using the same logic as previously, we have that a unit increase in rescaled median income corresponds to a $\frac{1}{\max(\text{income}) - \min(\text{income})}$ increase in raw, unscaled median income, so we conclude that for every approximately `r toString(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)))` increase in a customer's median income, the odds of that customer belonging to the new camp decreases by about 96%.
+In the last row of the table, we have that the estimate of the odds ratio corresponding to the rescaled median income is 0.04, which means that for every unit increase in rescaled median income, the odds of a customer belonging to the new camp decreases by about 96%. Using the same logic as previously, we have that a unit increase in rescaled median income corresponds to a $\frac{1}{\max(\text{income}) - \min(\text{income})}$ increase in raw, unscaled median income, so we conclude that for every approximately `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` increase in a customer's median income, the odds of that customer belonging to the new camp decreases by about 96%.
 
 These estimates of the odds ratios corresponding to each of the variables in the model tell us that the youngest and lowest income customers have almost 2 to 1 odds of buying our newer and more affordable Active and Advance line products, and this trend is made even more clear by the fact that by even the smallest of increases in median income, the odds of a customer purchasing a product from one of these lines goes down by a staggering 96%. This allows us to conclude that among our lower income customers, our Active and Advance line products have indeed been able to attract considerable attention, and that our new customers mainly reside in regions of lower median income.
 
-## Informative title for section addressing a research question 2
+## Device Performance for Customers of Different Races
 
 To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub [(which can be found here)](https://fitnesstrackerinfohub.netlify.app/), which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji_modifier unicodes were also converted to more interprettable labels.
 
@@ -383,7 +387,11 @@ We can see that for both models, as we move from a lighter emoji skin tone modif
 
 ## Discussion
 
-_In this section you will summarize your findings across all the research questions and discuss the strengths and limitations of your work. It doesn't have to be long, but keep in mind that often people will just skim the intro and the discussion of a document like this, so make sure it is useful as a semi-standalone section (doesn't have to be completely standalone like the executive summary)._
+<!-- _In this section you will summarize your findings across all the research questions and discuss the strengths and limitations of your work. It doesn't have to be long, but keep in mind that often people will just skim the intro and the discussion of a document like this, so make sure it is useful as a semi-standalone section (doesn't have to be completely standalone like the executive summary)._ -->
+
+Taking a look at the customer base of the new affordable lines ("Active" and Advance" products) through our first research question, we discover that for every `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` Canadian dollars increase in a customer's median region income, the odds of that customer purchasing a device from MINGAR's affordable line over a device from MINGAR's other lines decreases by roughly 96%. Moreover, for every `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in customer age, the odds of that customer purchasing a device from MINGAR's affordable line ('Active' or 'Advance') over a device from MINGAR's other lines increases by about 46%. Additionally, customers who are `r toString(signif(min(cust_dev_info$age), 2))` years old and live in a region where the median income is `r toString(min(cust_dev_info$income))` have 1.93 odds of purchasing a device from MINGAR's affordable lines.
+
+From this, we can conclude that the new affordable lines have attracted customers that are located in lower income regions and are slightly older in age in comparison to the consumer base of MINGAR's other lines. Hence, the affordable lines have successfully attracted new customers of a lower income target market.
 
 ### Strengths and limitations
 
@@ -393,15 +401,15 @@ With that said, the UofTears team faced a few limitations during this analysis. 
 
 With regards to the second research question, one limiting factor is the presence of missing values for user's emoji modifier, which signifies that they used the default skintone. The UofTears team is thus unable to determine the race/ethnicity of those users, which adds uncertainty and limits the conclusions we were able to make about the relationship between device flags and user race. Similarly, a certain choice of emoji skintone does not necessarily correspond to the user's actual racial identity.
 
-- mention something about data distribution maybe?
+<!-- - mention something about data distribution maybe? -->
 
 \newpage
 # Consultant information
 ## Consultant profiles
 
-*Complete this section with a brief bio for each member of your group. If you are completing the project individually, you only need to complete one for yourself. In that case, change the title of this section to 'Consultant profile' instead. Examples below. This section is only marked for completeness, clarity and professionalism, not 'truth' so you can write it as if we're a few years in the future. Put your current degree in as completed and/or add your first choice grad school program, whatever you like. What skills related skills would you most like to highlight? What job title do you want?*
+<!-- *Complete this section with a brief bio for each member of your group. If you are completing the project individually, you only need to complete one for yourself. In that case, change the title of this section to 'Consultant profile' instead. Examples below. This section is only marked for completeness, clarity and professionalism, not 'truth' so you can write it as if we're a few years in the future. Put your current degree in as completed and/or add your first choice grad school program, whatever you like. What skills related skills would you most like to highlight? What job title do you want?* -->
 
-**Chloe Nguyen**. Chloe is a third-year Data Science and Computer Science student at the University of Toronto. She specializes in data science and machine learning. Chloe has experience working in project management and software development at Microsoft's Cloud and AI team- where she collaborated with internal and external stakeholders to create project plans, build prototypes and develop solutions. Chloe is an avid member of UofT's Computer Science community, having lead various student unions and clubs-such as President of Women in Computer Science, Treasurer of the Computer Science Student Union and Sponsorship Executive of Neurotech.
+**Chloe Nguyen**. Chloe is a third-year Data Science and Computer Science student at the University of Toronto. She specializes in data science and machine learning. Chloe has experience working in project management and software development at Microsoft's Cloud and AI team- where she collaborated with internal and external stakeholders to create project plans, build prototypes and develop solutions. Chloe is an active member of UofT's Computer Science community, having lead various student unions and clubs-such as President of Women in Computer Science, Treasurer of the Computer Science Student Union and Sponsorship Executive of Neurotech.
 
 **Shih-Ting (Cindy) Huang**. Cindy is currently a third-year undergraduate studying Data Science at the University of Toronto. With a passion for improving user experience through machine learning, she actively seeks ways to implement different theoretical concepts in real life for business-oriented problems. Her skills in multidisciplinary fields, including data science, marketing, and linguistics, have enabled her to obtain a holistic perspective on multiple projects and devise creative solutions with a user-guided mindset.
 
@@ -415,18 +423,18 @@ _This section should be fairly short, no more than half a page. Assume a general
 
 The UofTears team is committed to abiding by ethical guidelines for statistical practice when preparing and analyzing data. We promise to avoid disclosing confidential information without prior permission from our clients, such as data on their customers and devices. Moreover, we seek to make careful conclusions about the data and the investigative questions at hand. In this report, we have listed out all the assumptions we made when constructing the models as well as potential limitations to our research, fully informing the audience of the context surrounding our conclusions. Lastly, we hold responsibility to the society. The goal of this investigation was not only to determine if products could have harmful biases towards certain populations, but also assist the general public in understanding easily how we have obtained those insights.
 
-1. Responsibility to Society: "strive to advance public knowledge and understanding of information...providing assistance in discrediting false or misleading info"
-2. Responsibility to Employers and Clients: avoid disclosure of confidential information without prior written permission
-3. Prevent use of misleading summary of the data and ensure to detail all assumptions and limitations relevant to the data
+<!-- 1. Responsibility to Society: "strive to advance public knowledge and understanding of information...providing assistance in discrediting false or misleading info" -->
+<!-- 2. Responsibility to Employers and Clients: avoid disclosure of confidential information without prior written permission -->
+<!-- 3. Prevent use of misleading summary of the data and ensure to detail all assumptions and limitations relevant to the data -->
 
-* _Make at least three relevant statements about your company's approach to ethical statistical consulting. These should be appropriately in line with professional conduct advice like the [Statistical Society of Canada Code of Conduct](https://ssc.ca/sites/default/files/data/Members/public/Accreditation/ethics_e.pdf) or the [Ethical Guidelines for Statistical Practice from the American Statistical Society](https://www.amstat.org/ASA/Your-Career/Ethical-Guidelines-for-Statistical-Practice.aspx). For example, "the customer is always right" ISN'T the type of thing an ethical statistical consultant would include._
-*	_Be very careful not to just copy and paste from these other documents! Put things in your own words._
+<!-- * _Make at least three relevant statements about your company's approach to ethical statistical consulting. These should be appropriately in line with professional conduct advice like the [Statistical Society of Canada Code of Conduct](https://ssc.ca/sites/default/files/data/Members/public/Accreditation/ethics_e.pdf) or the [Ethical Guidelines for Statistical Practice from the American Statistical Society](https://www.amstat.org/ASA/Your-Career/Ethical-Guidelines-for-Statistical-Practice.aspx). For example, "the customer is always right" ISN'T the type of thing an ethical statistical consultant would include._ -->
+<!-- *	_Be very careful not to just copy and paste from these other documents! Put things in your own words._ -->
 
 
 \newpage
 # References
 
-_You don't need to cite course materials, but consider all the the places you got data from, as well as the packages used and R itself. These are all things you should consider citing. Likewise, you might use some external resources on the emoji skin tones/Fitzpatrick scale, etc._
+<!-- _You don't need to cite course materials, but consider all the the places you got data from, as well as the packages used and R itself. These are all things you should consider citing. Likewise, you might use some external resources on the emoji skin tones/Fitzpatrick scale, etc._ -->
 Achim Zeileis, Torsten Hothorn (2002). Diagnostic Checking in Regression
   Relationships. R News 2(3), 7-10. URL https://CRAN.R-project.org/doc/Rnews/
 
@@ -464,7 +472,7 @@ Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source
 \newpage
 # Appendix
 
-_These appendices should outline in more detail the steps taken to access the following datasets. They should NOT include code, but should briefly describe the steps and important considerations. I.e., show that you understand what needs to be considered when web scraping, protecting licensed data, etc._
+<!-- _These appendices should outline in more detail the steps taken to access the following datasets. They should NOT include code, but should briefly describe the steps and important considerations. I.e., show that you understand what needs to be considered when web scraping, protecting licensed data, etc._ -->
 
 ## Web scraping industry data on fitness tracker devices
 
