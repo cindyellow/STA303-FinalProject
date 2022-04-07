@@ -64,6 +64,43 @@ _Guidelines for the executive summary:_
 *	_A small number of key visualizations and/or tables are included_
 *	_All research questions are addressed_
 
+```{r, echo = FALSE}
+cust_dev_info %>%
+  ggplot(aes(x = income)) +
+  geom_histogram() +
+  facet_wrap(~is_new, 
+             nrow = 2,
+             labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
+  ggtitle("The Distribution of Median Income of the Sampled Customers") +
+  xlab("Median Income") +
+  theme_minimal()
+```
+
+```{r, echo = FALSE}
+cust_dev_info %>%
+  ggplot(aes(x = age)) +
+  geom_histogram() +
+  facet_wrap(~is_new, 
+             nrow = 2,
+             labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
+  ggtitle("The Distribution of Age of the Sampled Customers") +
+  xlab("Age") +
+  theme_minimal()
+```
+
+```{r, echo = FALSE}
+cust_dev_info %>%
+  ggplot(aes(x = pronouns)) +
+  geom_bar() +
+  facet_wrap(~is_new,
+             nrow = 1,
+             labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
+  ggtitle("The Frequencies of Different Pronouns Among the Sampled Customers") +
+  xlab("Pronouns") +
+  theme_minimal()
+```
+
+
 ```{r performance_scatterplot, echo=FALSE, fig.cap="Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier."}
 cust_sleep_complete %>%
   ggplot() +
