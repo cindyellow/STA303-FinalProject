@@ -110,7 +110,7 @@ inc <- cust_dev_info %>%
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
   ggtitle("The Distribution of Median Income \nof the Sampled Customers") +
   xlab("Median Income (in Canadian dollars)") +
-    labs(caption = "Boxplots displaying incomes of customers who purchased MINGAR's new affordable line \n vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').") +
+    labs(caption = "Boxplots displaying incomes of customers who purchased \nMINGAR's new affordable line vs. \ncustomers who purchased MINGAR's other lines \n(i.e. 'Traditional Customers').") +
   theme_minimal() +
   coord_fixed(ratio=25000) + 
   theme(plot.title = element_text(size = 12, hjust = 0.5),
@@ -128,12 +128,11 @@ age <- cust_dev_info %>%
              labeller = labeller(is_new = c("1" = "New Customers", "0" = "Traditional Customers"))) +
   ggtitle("The Distribution of Age \nof the Sampled Customers") +
   xlab("Age (in years)") +
-  labs(caption = "Boxplots displaying ages of customers who purchased MINGAR's new affordable line \n(i.e. 'New Customers') vs. customers who purchased MINGAR's other lines (i.e. 'Traditional Customers').") +
+  labs(caption = "Boxplots displaying ages of customers who purchased \nMINGAR's new affordable line (i.e. 'New Customers') vs. \ncustomers who purchased MINGAR's other lines \n(i.e. 'Traditional Customers').") +
   theme_minimal() +
   coord_fixed(ratio=10) + 
   theme(plot.title = element_text(size = 12, hjust = 0.5),
         plot.caption = element_text(face = "italic", hjust = 0))
-inc
 ```
 
 ```{r performance_scatterplot, echo=FALSE, message=FALSE, warning=FALSE}
@@ -145,16 +144,13 @@ sleep <- cust_sleep_complete %>%
   xlab("Duration of Sleep (in minutes)") +
   ylab("Number of flags") +
   ggtitle("Distribution of sleep quality") +
-  labs(caption = "Scatterplots showing the relationship between duration of sleep session and number of flags for each emoji modifier.") +
+  labs(caption = "Scatterplots showing the relationship between duration of sleep session and number of flags for \neach emoji modifier.") +
   theme_minimal() +
   theme(plot.title = element_text(size = 12, hjust = 0.5),
         plot.caption = element_text(face = "italic", hjust = 0)) 
-
-sleep
 ```
 
-# ADD CAPTION DONT FORGET
-```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.height=7}
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.height=8.5}
 # Create layout : nrow = 2, ncol = 2
 pushViewport(viewport(layout = grid.layout(2, 2)))
 # A helper function to define a region on the layout
