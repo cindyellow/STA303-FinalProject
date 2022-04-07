@@ -180,7 +180,7 @@ This report provides customer and product analytics on MINGAR's fitness tracking
 
 ## Customers of MINGAR's New Afforable Lines
 
-For research question 1, we used the `cancensus` API to retrieve 2016 median incomes for each census subdivision defined by its unique CSDuid - the Canadian census subdivision ID. Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to estimate our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we assigned them the mean of the multiple incomes. Moreover, we added a new variable "age" to our customer data to inform us of the customer's current age. We then merged this customer information data with cust_dev on customer ID. This allowed us to get information on customers and the specific ID of their device. This dataset was then merged with our device dataset on device ID to retrieve information on each customer's device. After that, we selected the relevant variables such that our customer's sensitive data are not made public in our report.
+For research question 1, we used the `cancensus` API to retrieve 2016 median incomes for each census subdivision defined by its unique CSDuid - the Canadian census subdivision ID. Next, we downloaded 2016 Census Canada Postal Code Conversion Files from the University of Toronto portal- which indicates the CSDuid for various postcodes. Joining these datasets, we were able to determine median income for each postal code. After that, we joined this newly joined dataset with our customer data on postcode to estimate our customers' incomes. Note that there are customers with more than 1 postcode (and hence, are matched with more than 1 income). For such customers, we assigned them the mean of the multiple incomes. Moreover, we added a new variable "age" to our customer data to inform us of the customer's current age. We then merged this customer information data with customer-device matchup data on customer ID. This allowed us to get information on customers and the specific ID of their device. This dataset was then merged with our device dataset on device ID to retrieve information on each customer's device. After that, we selected the relevant variables such that our customer's sensitive data are not made public in our report.
 
 
 As a final data cleaning step, we created a new binary variable in the dataset that takes value 1 if a customer is considered "new" (i.e. is a buyer of our line of "Active" or "Advance" products) and 0 otherwise. This allowed us to build a model that predicts if, given some information about a customer, this customer belongs to the camp of "new" customers or if they belong to the camp of "traditional" customers, which helped us answer the question of who our new customers are and how they differ from those we consider to be our more "traditional" customers.
@@ -360,8 +360,8 @@ As we are trying to understand if there are discrepancies between the performanc
 ```{r performance_boxplot, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=6.6}
 # create a visualization
 cust_sleep_complete %>%
-  mutate(flags=as.factor(flags)) %>% # Turn number of flags into a factor for boxplots
-  ggplot() + # Plotting everything
+  mutate(flags=as.factor(flags)) %>%
+  ggplot() +
   aes(y=duration, x=flags) +
   facet_wrap(~emoji_modifier) +
   geom_boxplot() +
@@ -379,35 +379,34 @@ There were some very interesting findings from our final models, as well as from
 On to our models. The most meaningful thing to look at are the slopes of the models, which are shown in the table below. The LM model is the linear model with duration and the emoji-modifier (and its interaction) while the LMM model is the linear mixed-model with age as another random effect.
 
 ```{r summary_performance_model, echo=FALSE, eval=FALSE}
-summary(device_performance_model_fixed) # Summary of the fixed model
-summary(device_performance_model_mixed) # Summary of the mixed model (with age)
+summary(device_performance_model_fixed)
+summary(device_performance_model_mixed)
 ```
 
 ```{r performance_table, echo=FALSE}
-# A table listing the coefficients 
-tibble(`Emoji Modifiers` = # The labels for the coefficients
-         c("Default", 
-           "Light Skin Tone", 
-           "Medium-Light Skin Tone",
-           "Medium Skin Tone", 
-           "Medium-Dark Skin Tone", 
-           "Dark Skin Tone"),
-       `LM Model Increase` = # The coefficients for the linear model
+tibble(`Emoji Modifiers` = c("Default", 
+                                 "Light Skin Tone", 
+                                 "Medium-Light Skin Tone",
+                                 "Medium Skin Tone", 
+                                 "Medium-Dark Skin Tone", 
+                                 "Dark Skin Tone"),
+       `LM Model Increase` = 
          c(0.006494,
            0.003046,
            0.007467,
            0.011354,
            0.022366,
            0.035384),
-       `LMM Model Increase` = # The coefficients for the linear mixed model
+       `LMM Model Increase` = 
          c(0.006487,
            0.003052,
            0.007457,
            0.011361,
            0.022352,
-           0.035391)) %>% # Piping everything into the table
+           0.035391)) %>% 
   knitr::kable(caption = "Average Increase in number of Flags for 1 more minute of sleep")
 ```
+
 We can see that for both models, as we move from a lighter emoji skin tone modifier to a darker emoji skin tone modifier, the average increase in number of flags for 1 more minute of sleep, which strongly suggests that the device performs more poorly when used by someone with darker skin. This implies that the complaint that the MINGAR social media team is dealing with is indeed valid.
 
 ## Discussion
