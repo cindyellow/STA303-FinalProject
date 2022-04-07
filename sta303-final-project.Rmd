@@ -154,21 +154,36 @@ sleep <- cust_sleep_complete %>%
 #   xlab("Number of flags") +
 #   ggtitle("Distribution of flags per sleep session")
 ```
-```{r, fig.height=10}
-library(cowplot)
-# title <- ggdraw() + 
-#   draw_label(
-#     "Graphs",
-#     fontface = 'bold',
-#     x = 0.5,
-#     hjust = 0.5
-#   ) +
-#   theme(
-#     # add margin on the left of the drawing canvas,
-#     # so title is aligned with left edge of first plot
-#     plot.margin = margin(0, 0, 0, 7)
-#   )
-plot_grid(inc, age, sleep, ncol=2, rel_heights = c(1,2), rel_widths = c(1,1,0.1,0.9))
+```{r, fig.height=10, message=FALSE, warning=FALSE, echo=FALSE}
+# Move to a new page
+library("gridExtra")
+library(grid)
+grid.newpage()
+# Create layout : nrow = 2, ncol = 2
+pushViewport(viewport(layout = grid.layout(2, 2)))
+# A helper function to define a region on the layout
+define_region <- function(row, col){
+  viewport(layout.pos.row = row, layout.pos.col = col)
+} 
+# Arrange the plots
+print(age, vp = define_region(1, 1))
+print(inc, vp = define_region(1, 2))
+print(sleep, vp=define_region(2, 1:2))
+
+# library(cowplot)
+# # title <- ggdraw() + 
+# #   draw_label(
+# #     "Graphs",
+# #     fontface = 'bold',
+# #     x = 0.5,
+# #     hjust = 0.5
+# #   ) +
+# #   theme(
+# #     # add margin on the left of the drawing canvas,
+# #     # so title is aligned with left edge of first plot
+# #     plot.margin = margin(0, 0, 0, 7)
+# #   )
+# plot_grid(inc, age, sleep, ncol=2, rel_heights = c(1,2), rel_widths = c(1,1,0.1,0.9))
 ```
 
 \newpage
