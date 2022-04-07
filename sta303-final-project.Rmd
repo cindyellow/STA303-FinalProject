@@ -154,24 +154,22 @@ sleep <- cust_sleep_complete %>%
 #   xlab("Number of flags") +
 #   ggtitle("Distribution of flags per sleep session")
 ```
-
-```{r}
+```{r, fig.height=10}
 library(cowplot)
-title <- ggdraw() + 
-  draw_label(
-    "Graphs",
-    fontface = 'bold',
-    x = 0.5,
-    hjust = 0.5
-  ) +
-  theme(
-    # add margin on the left of the drawing canvas,
-    # so title is aligned with left edge of first plot
-    plot.margin = margin(0, 0, 0, 7)
-  )
-plot_grid(title, inc, age, sleep, ncol=2)
+# title <- ggdraw() + 
+#   draw_label(
+#     "Graphs",
+#     fontface = 'bold',
+#     x = 0.5,
+#     hjust = 0.5
+#   ) +
+#   theme(
+#     # add margin on the left of the drawing canvas,
+#     # so title is aligned with left edge of first plot
+#     plot.margin = margin(0, 0, 0, 7)
+#   )
+plot_grid(inc, age, sleep, ncol=2, rel_heights = c(1,2), rel_widths = c(1,1,0.1,0.9))
 ```
-
 
 \newpage
 # Technical report
