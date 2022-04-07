@@ -68,8 +68,7 @@ cust_sleep <- readRDS("data-raw/cust_sleep.Rds")
 # Device
 url <- "https://fitnesstrackerinfohub.netlify.app/"
 
-# Make sure this code is updated appropriately to provide 
-# informative user_agent details
+# Provide informative user_agent details
 target <- bow(url,
               user_agent = "cindyy.huang@utoronto.ca for STA303/1002 project",
               force = TRUE)
@@ -136,7 +135,7 @@ customer <- customer %>%
   mutate(dob = as.Date(dob,'%Y-%m-%d')) %>%
   mutate(age = as.numeric(difftime(Sys.Date(),dob, units = "weeks"))/52.25) 
 
-# Modify emoji_modifier to detail skin tone
+# Modify emoji-modifier to detail skin tone
 customer <- customer %>%
   mutate(emoji_modifier = 
            if_else(emoji_modifier=="U+1F3FB", "Light skin tone",
