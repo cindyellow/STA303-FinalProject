@@ -181,17 +181,38 @@ cust_sleep_complete %>%
 
 There were some very interesting findings from our final models, as well as from our boxplot. First, from the boxplot, we can clearly see that only customers that use the dark skin tone emoji-modifier have experienced a sleep session with more than 22 flags. Similarly, only customers with dark skin tone or medium-dark skin tone modifiers have experienced a sleep session with more than 13 flags.
 
-On to our models.
+On to our models. The most meaningful thing to look at are the slopes of the models, which are shown in the table below. The LM model is the linear model with duration and the emoji-modifier (and its interaction) while the LMM model is the linear mixed-model with age as another random effect.
 
 ```{r summary_performance_model, echo=FALSE, eval=FALSE}
 summary(device_performance_model_fixed)
 summary(device_performance_model_mixed)
 ```
 
+```{r performance_table, echo=FALSE}
+tibble(`Emoji Modifiers` = c("Default", 
+                                 "Light Skin Tone", 
+                                 "Medium-Light Skin Tone",
+                                 "Medium Skin Tone", 
+                                 "Medium-Dark Skin Tone", 
+                                 "Dark Skin Tone"),
+       `LM Model Increase` = 
+         c(0.006494,
+           0.003046,
+           0.007467,
+           0.011354,
+           0.022366,
+           0.035384),
+       `LMM Model Increase` = 
+         c(0.006487,
+           0.003052,
+           0.007457,
+           0.011361,
+           0.022352,
+           0.035391)) %>% 
+  knitr::kable(caption = "Average Increase in number of Flags for 1 more minute of sleep")
+```
 
-
-
-
+We can see that for both models, as we move from a lighter emoji skin tone modifier to a dark emoji skin tone modifier, the average increase in number of flags for 1 more minute of sleep, which strongly suggests that the device performs more poorly when used by someone with darker skin. This implies that the complaint that the MINGAR social media team is dealing with is indeed valid.
 
 ## Discussion
 
