@@ -215,7 +215,7 @@ From the above bar plots, we can see that for both traditional and new customers
 
 Before building preliminary models, recall that as we are trying to gain insight as to what who tends to buy our "Active" and "Advance" line products and how they differ from our traditional customers who buy other lines, we know that the colour of the emoji that customers use has no direct or quantifiable (but still some) impact on whether they belong to the new or traditional camp, which is why we will include this as a random effect.
 
-Now, we have the tools to build our preliminary models. Since the response is binary and we have a random effect, we must use a generalized linear mixed model (GLMM) for this data. We start by fitting a GLMM with all of the potential predictors that we have so far, including pronouns, median income, and age. Then, we create an auxiliary model that doesn't include pronouns as a predictor and another that doesn't include age as a predictor, since in the previous exploratory data analysis we could not determine whether these would be good predictors just based on eyeballing the boxplots. 
+Now, we have the tools to build our preliminary models. Since the response is binary and we have a random effect, we must use a generalized linear mixed model (GLMM) of the binomial family for this data. We start by fitting a GLMM with all of the potential predictors that we have so far, including pronouns, median income, and age. Then, we create an auxiliary model that doesn't include pronouns as a predictor and another that doesn't include age as a predictor, since in the previous exploratory data analysis we could not determine whether these would be good predictors based on observing the box plots. 
 
 Note that the assumptions for the GLMM models are met:
 
@@ -224,6 +224,8 @@ Note that the assumptions for the GLMM models are met:
 - Random effects are normally distributed.
 
 - All features have constant variance.
+
+- The chosen linked function (logit) is appropriate given the binary response.
 
 
 ```{r, echo = FALSE, include = FALSE}
@@ -275,11 +277,11 @@ $$\text{income}_{\text{rescaled}} = \frac{\text{income}_\text{raw} - \min(\text{
 
 where $\text{age}_\text{raw}$ and $\text{income}_\text{raw}$ correspond to the original, "raw" age (in years) or median income (in Canadian dollars) value that is to be rescaled, $\min(\text{age}), \min(\text{income}), \max(\text{age}),$ and $\max(\text{income})$ correspond to the minimum and maximum age (in years) and median income (in Canadian dollars) values among all customers in the dataset, and $\text{age}_{\text{rescaled}}$ and $\text{income}_{\text{rescaled}}$ correspond to the resulting rescaled age and median income values.
 
-In Table 1, we can first see that the estimate of the baseline odds ratio is 1.93, which means that when both rescaled age and rescaled median income are 0, the odds of a customer belonging to the new camp is 1.93 to 1. Since a rescaled age of 0 and a rescaled median income of 0 correspond to the age of `r toString(signif(min(cust_dev_info$age), 2))` years and the median income of `r toString(min(cust_dev_info$income))` Canadian dollars respectively, we can say that the odds ratio of a customer belonging to the new camp is 1.93 to 1 when that customer is `r toString(signif(min(cust_dev_info$age), 2))` years old and lives in a region where the median income is `r toString(min(cust_dev_info$income))` Canadian dollars. 
+In Table 1, we can first see that the estimate of the baseline odds ratio is 1.93, which means that when both rescaled age and rescaled median income are 0, the odds of a customer belonging to the new camp is 1.93 to 1. Also, by the 95% CI in this row, we are 95% confident that the true odds that a customer belongs to the new camp lies between 1.78:1 and 2.10:1, given that they have a rescaled age of 0 and also a rescaled median income of 0. Since a rescaled age of 0 and a rescaled median income of 0 correspond to the age of `r toString(signif(min(cust_dev_info$age), 2))` years and the median income of `r toString(min(cust_dev_info$income))` Canadian dollars respectively, we can say that the odds ratio of a customer belonging to the new camp is 1.93 to 1 when that customer is `r toString(signif(min(cust_dev_info$age), 2))` years old and lives in a region where the median income is `r toString(min(cust_dev_info$income))` Canadian dollars. 
 
-In the next row of Table 1, we have that the estimate of the odds ratio corresponding to the rescaled age is 1.46. This means that for every unit increase in rescaled age, the odds of a customer belonging to the new camp increase by about 46%. By definition, we have that a unit increase in rescaled age corresponds to a $\frac{1}{\max(\text{age}) - \min(\text{age})}$ increase in raw, unscaled age (in years), so we conclude that for every approximately `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in a customer's age (this is approximately `r toString(signif(365 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` days), the odds of that customer belonging to the new camp increases by about 46%.
+In the next row of Table 1, we have that the estimate of the odds ratio corresponding to the rescaled age is 1.46. This means that for every unit increase in rescaled age, the odds of a customer belonging to the new camp increase by about 46%. Also, by the 95% CI in this row, we are 95% confident that for every unit increase in rescaled age, the true change in the odds that a customer belongs to the new camp lies between a 29% increase and a 66% increase. By definition, we have that a unit increase in rescaled age corresponds to a $\frac{1}{\max(\text{age}) - \min(\text{age})}$ increase in raw, unscaled age (in years), so we conclude that for every approximately `r toString(signif(1 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` year increase in a customer's age (this is approximately `r toString(signif(365 / (max(cust_dev_info$age) - min(cust_dev_info$age)), 2))` days), the odds of that customer belonging to the new camp increases by about 46%.
 
-In the last row of Table 1, we have that the estimate of the odds ratio corresponding to the rescaled median income is 0.04, which means that for every unit increase in rescaled median income, the odds of a customer belonging to the new camp decreases by about 96%. Using the same logic as previously, we have that a unit increase in rescaled median income corresponds to a $\frac{1}{\max(\text{income}) - \min(\text{income})}$ increase in raw, unscaled median income (in Canadian dollars), so we conclude that for every approximately `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` Canadian dollar increase in the median income of the region where a customer resides, the odds of that customer belonging to the new camp decreases by about 96%.
+In the last row of Table 1, we have that the estimate of the odds ratio corresponding to the rescaled median income is 0.04, which means that for every unit increase in rescaled median income, the odds of a customer belonging to the new camp decreases by about 96%. Also, by the 95% CI in this row, we are 95% confident that for every unit increase in rescaled median income, the true change in the odds that a customer belongs to the new camp lies between a 97% decrease and a 94% decrease. Using the same logic as previously, we have that a unit increase in rescaled median income corresponds to a $\frac{1}{\max(\text{income}) - \min(\text{income})}$ increase in raw, unscaled median income (in Canadian dollars), so we conclude that for every approximately `r toString(signif(1 / (max(cust_dev_info$income) - min(cust_dev_info$income)), 3))` Canadian dollar increase in the median income of the region where a customer resides, the odds of that customer belonging to the new camp decreases by about 96%. 
 
 These estimates of the odds ratios corresponding to each of the variables in the model tell us that the youngest and lowest income customers have almost 2 to 1 odds of buying our newer and more affordable Active and Advance line products, and this trend is made even more clear by the fact that by even the smallest of increases in median income, the odds of a customer purchasing a product from one of these lines goes down by a staggering 96%. This allows us to conclude that among our lower income customers, our Active and Advance line products have indeed been able to attract considerable attention, and that our new customers mainly reside in regions of lower median income.
 
@@ -287,7 +289,26 @@ These estimates of the odds ratios corresponding to each of the variables in the
 
 To address research question 2, we first retrieved device data scraped from the Fitness Tracker info hub [(which can be found here)](https://fitnesstrackerinfohub.netlify.app/), which gave us information on the device's name, line, retail price, and features. All data was scraped after confirming that we have permission from the website to do so. We also added a few potentially helpful variables to this dataset, including device retail price category and age based on its release date. Using the client provided data on device, we joined the two datasets to determine the device information corresponding to each device ID. From this, we selected only the devices that can track sleep, as sleep score is our main variable of interest. We then join this dataset with sleep data for each customer to match each sleep session to the associated device. From this, we selected only variables related to the investigation to protect customer privacy. We also dropped sessions with missing values for sex, pronouns, and/or postcode because there were not a lot to represent a significant trend, and they are not the predictors we wish to focus on for this question. The emoji-modifier unicodes were also converted to more interpretable labels.
 
-With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that was raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable--using emoji-modifiers to predict each customer's skin tone. The following figure depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic, so we decided to fit a linear mixed model. The reason why we avoided generalized additive models is because we seeked to maximize interpretability, as we needed to explain our model to our employers.
+With the data that we had, the only way to measure the quality of the data for a given sleep session was to measure the number of flags that were raised in the session. Furthermore, as we do not directly collect data on race or ethnicity, we were forced to use a proxy variable--using emoji-modifiers to predict each customer's skin tone. The following figure depicts the distribution in the duration of sleep sessions with differing number of flags raised for people with different emoji-modifiers. 
+
+```{r performance_boxplot, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=6.6}
+# create a visualization
+cust_sleep_complete %>%
+  mutate(flags=as.factor(flags)) %>% # Turn number of flags into a factor for boxplots
+  ggplot() + # Plotting everything
+  aes(y=duration, x=flags) +
+  facet_wrap(~emoji_modifier) +
+  geom_boxplot() +
+  ylab("Duration of Sleep (in minutes)") +
+  xlab("Number of flags") +
+  ggtitle("Distribution of sleep quality")+
+  coord_flip()+
+  theme_minimal()
+```
+
+As we are trying to understand if there are discrepancies between the performance of the device (i.e., quality of the data measured) for different sleep sessions, our predicted variable was the number of flags raised for a given sleep session. We were primarily interested in how the skin tone and the sleep quality affected these measurements, so we set the emoji-modifiers and the duration of a sleep session as the fixed effects. An ANOVA test led us to include the interaction between these two variables in our model. This was our baseline model. After performing many likelihood ratio tests on models with and without various random effects (i.e., the customer's age and gender, as well as the line and battery life of the device), we decided to include another model with age as a random effect.
+
+Before fitting the final model, we checked that the assumptions were met. From the figure, note that we can see that when we are given the emoji-modifier of a customer, the relationship between the duration of sleep and the number of flags raised is roughly linear and homoscedastic. Since MINGAR devices all use the same MINGAR sleep-measuring technology and each observation in our dataset is a recorded sleep session, it is fair to assume that devices is not a random effect and thus the units are independent. Moreover, both the random effects and within-unit residuals follow normal distributions. Hence, we decided to fit a linear mixed model. The reason why we avoided generalized additive models is because we sought to maximize interpretability, as we needed to explain our model to our employers. 
 
 ```{r performance_interaction_or_not, echo=FALSE, eval=FALSE}
 # Model with interaction included
@@ -337,22 +358,7 @@ lmtest::lrtest(device_performance_model_2, device_performance_model_3)
 # Evidence that line is not needed
 ```
 
-As we are trying to understand if there are discrepancies between the performance of the device (i.e., quality of the data measured) for different sleep sessions, our predicted variable was the number of flags raised for a given sleep session. We were primarily interested in how the skin tone and the sleep quality affected these measurements, so we set the emoji-modifiers and the duration of a sleep session as the fixed effects. An ANOVA test led us to include the interaction between these two variables in our model. This was our baseline model. After performing many likelihood ratio tests on models with and without various random effects (i.e., the customer's age and gender, as well as the line and battery life of the device), we decided to include another model with age as a random effect.
 
-```{r performance_boxplot, echo=FALSE, fig.cap="Box-plots that show the distribution of the sleep quality for different number of flags and different emojis used.", fig.height=6.6}
-# create a visualization
-cust_sleep_complete %>%
-  mutate(flags=as.factor(flags)) %>%
-  ggplot() +
-  aes(y=duration, x=flags) +
-  facet_wrap(~emoji_modifier) +
-  geom_boxplot() +
-  ylab("Duration of Sleep (in minutes)") +
-  xlab("Number of flags") +
-  ggtitle("Distribution of sleep quality")+
-  coord_flip()+
-  theme_minimal()
-```
 
 \newpage
 
@@ -361,8 +367,8 @@ There were some very interesting findings from our final models, as well as from
 On to our models. The most meaningful thing to look at are the slopes of the models, which are shown in the table below. The LM model is the linear model with duration and the emoji-modifier (and its interaction) while the LMM model is the linear mixed-model with age as another random effect.
 
 ```{r summary_performance_model, echo=FALSE, eval=FALSE}
-summary(device_performance_model_fixed)
-summary(device_performance_model_mixed)
+summary(device_performance_model_fixed) # Summary of the fixed model
+summary(device_performance_model_mixed) # Summmary of the mixed model (with age)
 ```
 
 ```{r performance_table, echo=FALSE}
@@ -371,21 +377,21 @@ tibble(`Emoji Modifiers` = c("Default",
                                  "Medium-Light Skin Tone",
                                  "Medium Skin Tone", 
                                  "Medium-Dark Skin Tone", 
-                                 "Dark Skin Tone"),
-       `LM Model Increase` = 
+                                 "Dark Skin Tone"), # Labels for the coefficients
+       `LM Model Increase` = # The coefficients for the linear mixed model
          c(0.006494,
            0.003046,
            0.007467,
            0.011354,
            0.022366,
            0.035384),
-       `LMM Model Increase` = 
+       `LMM Model Increase` = # The coefficients for the linear mixed model
          c(0.006487,
            0.003052,
            0.007457,
            0.011361,
            0.022352,
-           0.035391)) %>% 
+           0.035391)) %>% # Piping everything into the table
   knitr::kable(caption = "Average Increase in number of Flags for 1 more minute of sleep")
 ```
 
